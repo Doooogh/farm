@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.doooogh.farm</groupId>
+    <artifactId>microservice-demo</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>auth-service</module>
+        <module>user-service</module>
+        <module>gateway-service</module>
+        <module>common</module>
+    </modules>
+
+    <properties>
+        <java.version>17</java.version>
+        <spring-boot.version>3.2.3</spring-boot.version>
+        <spring-cloud.version>2023.0.0</spring-cloud.version>
+        <jwt.version>0.12.5</jwt.version>
+        <spring-cloud-openfeign.version>4.1.0</spring-cloud-openfeign.version>
+        <spring-cloud-stream.version>4.1.0</spring-cloud-stream.version>
+        <rabbitmq.version>3.12.12</rabbitmq.version>
+        <spring-cloud-alibaba.version>2022.0.0.0</spring-cloud-alibaba.version>
+        <!-- 环境配置 -->
+        <nacos.server-addr.dev>localhost:8848</nacos.server-addr.dev>
+        <nacos.server-addr.prod>nacos-prod:8848</nacos.server-addr.prod>
+        <mysql.url.dev>jdbc:mysql://localhost:3306/oauth2_db</mysql.url.dev>
+        <mysql.url.prod>jdbc:mysql://mysql-prod:3306/oauth2_db</mysql.url.prod>
+        <redis.host.dev>localhost</redis.host.dev>
+        <redis.host.prod>redis-prod</redis.host.prod>
+        <rabbitmq.host.dev>localhost</rabbitmq.host.dev>
+        <rabbitmq.host.prod>rabbitmq-prod</rabbitmq.host.prod>
+        <fastjson2.version>2.0.47</fastjson2.version>
+        <!-- 数据库配置 -->
+        <mysql.url.pattern>jdbc:mysql://${mysql.host}:${mysql.port}/${mysql.database}</mysql.url.pattern>
+        <mysql.host.dev>localhost</mysql.host.dev>
+        <mysql.host.prod>mysql-prod</mysql.host.prod>
+        <mysql.port.dev>3306</mysql.port.dev>
+        <mysql.port.prod>3306</mysql.port.prod>
+        <mysql.database.dev>oauth2_db</mysql.database.dev>
+        <mysql.database.prod>oauth2_db</mysql.database.prod>
+        <mysql.username.dev>root</mysql.username.dev>
+        <mysql.username.prod>prod_user</mysql.username.prod>
+        <mysql.password.dev>your_password</mysql.password.dev>
+        <mysql.password.prod>prod_password</mysql.password.prod>
+
+        <!-- Redis配置 -->
+        <redis.host.dev>localhost</redis.host.dev>
+        <redis.host.prod>redis-prod</redis.host.prod>
+        <redis.port.dev>6379</redis.port.dev>
+        <redis.port.prod>6379</redis.port.prod>
+        <redis.password.dev></redis.password.dev>
+        <redis.password.prod>prod_redis_password</redis.password.prod>
+        <redis.database.dev>0</redis.database.dev>
+        <redis.database.prod>0</redis.database.prod>
+
+        <!-- RabbitMQ配置 -->
+        <rabbitmq.host.dev>localhost</rabbitmq.host.dev>
+        <rabbitmq.host.prod>rabbitmq-prod</rabbitmq.host.prod>
+        <rabbitmq.port.dev>5672</rabbitmq.port.dev>
+        <rabbitmq.port.prod>5672</rabbitmq.port.prod>
+        <rabbitmq.username.dev>guest</rabbitmq.username.dev>
+        <rabbitmq.username.prod>prod_mq_user</rabbitmq.username.prod>
+        <rabbitmq.password.dev>guest</rabbitmq.password.dev>
+        <rabbitmq.password.prod>prod_mq_password</rabbitmq.password.prod>
+
+        <!-- Nacos配置 -->
+        <nacos.host.dev>localhost</nacos.host.dev>
+        <nacos.host.prod>nacos-prod</nacos.host.prod>
+        <nacos.port.dev>8848</nacos.port.dev>
+        <nacos.port.prod>8848</nacos.port.prod>
+        <nacos.username.dev>nacos</nacos.username.dev>
+        <nacos.username.prod>nacos</nacos.username.prod>
+        <nacos.password.dev>nacos</nacos.password.dev>
+        <nacos.password.prod>prod_nacos_password</nacos.password.prod>
+    </properties>
+
+    <profiles>
+        <!-- 开发环境 -->
+        <profile>
+            <id>dev</id>
+            <properties>
+                <env>dev</env>
+                <!-- 数据库 -->
+                <mysql.host>${mysql.host.dev}</mysql.host>
+                <mysql.port>${mysql.port.dev}</mysql.port>
+                <mysql.database>${mysql.database.dev}</mysql.database>
+                <mysql.username>${mysql.username.dev}</mysql.username>
+                <mysql.password>${mysql.password.dev}</mysql.password>
+                <!-- Redis -->
+                <redis.host>${redis.host.dev}</redis.host>
+                <redis.port>${redis.port.dev}</redis.port>
+                <redis.password>${redis.password.dev}</redis.password>
+                <redis.database>${redis.database.dev}</redis.database>
+                <!-- RabbitMQ -->
+                <rabbitmq.host>${rabbitmq.host.dev}</rabbitmq.host>
+                <rabbitmq.port>${rabbitmq.port.dev}</rabbitmq.port>
+                <rabbitmq.username>${rabbitmq.username.dev}</rabbitmq.username>
+                <rabbitmq.password>${rabbitmq.password.dev}</rabbitmq.password>
+                <!-- Nacos -->
+                <nacos.host>${nacos.host.dev}</nacos.host>
+                <nacos.port>${nacos.port.dev}</nacos.port>
+                <nacos.username>${nacos.username.dev}</nacos.username>
+                <nacos.password>${nacos.password.dev}</nacos.password>
+                <nacos.server-addr>${nacos.host}:${nacos.port}</nacos.server-addr>
+            </properties>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+        </profile>
+        
+        <!-- 生产环境 -->
+        <profile>
+            <id>prod</id>
+            <properties>
+                <env>prod</env>
+                <!-- 数据库 -->
+                <mysql.host>${mysql.host.prod}</mysql.host>
+                <mysql.port>${mysql.port.prod}</mysql.port>
+                <mysql.database>${mysql.database.prod}</mysql.database>
+                <mysql.username>${mysql.username.prod}</mysql.username>
+                <mysql.password>${mysql.password.prod}</mysql.password>
+                <!-- Redis -->
+                <redis.host>${redis.host.prod}</redis.host>
+                <redis.port>${redis.port.prod}</redis.port>
+                <redis.password>${redis.password.prod}</redis.password>
+                <redis.database>${redis.database.prod}</redis.database>
+                <!-- RabbitMQ -->
+                <rabbitmq.host>${rabbitmq.host.prod}</rabbitmq.host>
+                <rabbitmq.port>${rabbitmq.port.prod}</rabbitmq.port>
+                <rabbitmq.username>${rabbitmq.username.prod}</rabbitmq.username>
+                <rabbitmq.password>${rabbitmq.password.prod}</rabbitmq.password>
+                <!-- Nacos -->
+                <nacos.host>${nacos.host.prod}</nacos.host>
+                <nacos.port>${nacos.port.prod}</nacos.port>
+                <nacos.username>${nacos.username.prod}</nacos.username>
+                <nacos.password>${nacos.password.prod}</nacos.password>
+                <nacos.server-addr>${nacos.host}:${nacos.port}</nacos.server-addr>
+            </properties>
+        </profile>
+    </profiles>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${spring-boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${spring-cloud.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-starter-openfeign</artifactId>
+                <version>${spring-cloud-openfeign.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-stream</artifactId>
+                <version>${spring-cloud-stream.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-stream-binder-rabbit</artifactId>
+                <version>${spring-cloud-stream.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.alibaba.cloud</groupId>
+                <artifactId>spring-cloud-alibaba-dependencies</artifactId>
+                <version>${spring-cloud-alibaba.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- Fastjson2 -->
+            <dependency>
+                <groupId>com.alibaba.fastjson2</groupId>
+                <artifactId>fastjson2</artifactId>
+                <version>${fastjson2.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.alibaba.fastjson2</groupId>
+                <artifactId>fastjson2-extension-spring6</artifactId>
+                <version>${fastjson2.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>${spring-boot.version}</version>
+            </plugin>
+        </plugins>
+    </build>
+</project> 

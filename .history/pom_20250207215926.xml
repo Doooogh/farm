@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.doooogh.farm</groupId>
+    <artifactId>microservice-demo</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>auth-service</module>
+        <module>user-service</module>
+        <module>gateway-service</module>
+        <module>common</module>
+    </modules>
+
+    <properties>
+        <java.version>17</java.version>
+        <spring-boot.version>3.2.3</spring-boot.version>
+        <spring-cloud.version>2023.0.0</spring-cloud.version>
+        <jwt.version>0.12.5</jwt.version>
+        <spring-cloud-openfeign.version>4.1.0</spring-cloud-openfeign.version>
+        <spring-cloud-stream.version>4.1.0</spring-cloud-stream.version>
+        <rabbitmq.version>3.12.12</rabbitmq.version>
+        <spring-cloud-alibaba.version>2022.0.0.0</spring-cloud-alibaba.version>
+        <!-- 环境配置 -->
+        <nacos.server-addr.dev>localhost:8848</nacos.server-addr.dev>
+        <nacos.server-addr.prod>nacos-prod:8848</nacos.server-addr.prod>
+        <mysql.url.dev>jdbc:mysql://localhost:3306/oauth2_db</mysql.url.dev>
+        <mysql.url.prod>jdbc:mysql://mysql-prod:3306/oauth2_db</mysql.url.prod>
+        <redis.host.dev>localhost</redis.host.dev>
+        <redis.host.prod>redis-prod</redis.host.prod>
+        <rabbitmq.host.dev>localhost</rabbitmq.host.dev>
+        <rabbitmq.host.prod>rabbitmq-prod</rabbitmq.host.prod>
+        <fastjson2.version>2.0.47</fastjson2.version>
+    </properties>
+
+    <profiles>
+        <!-- 开发环境 -->
+        <profile>
+            <id>dev</id>
+            <properties>
+                <env>dev</env>
+                <nacos.server-addr>${nacos.server-addr.dev}</nacos.server-addr>
+                <mysql.url>${mysql.url.dev}</mysql.url>
+                <mysql.username>root</mysql.username>
+                <mysql.password>your_password</mysql.password>
+                <redis.host>${redis.host.dev}</redis.host>
+                <redis.password></redis.password>
+                <rabbitmq.host>${rabbitmq.host.dev}</rabbitmq.host>
+                <rabbitmq.username>guest</rabbitmq.username>
+                <rabbitmq.password>guest</rabbitmq.password>
+            </properties>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+        </profile>
+        
+        <!-- 生产环境 -->
+        <profile>
+            <id>prod</id>
+            <properties>
+                <env>prod</env>
+                <nacos.server-addr>${nacos.server-addr.prod}</nacos.server-addr>
+                <mysql.url>${mysql.url.prod}</mysql.url>
+                <mysql.username>prod_user</mysql.username>
+                <mysql.password>prod_password</mysql.password>
+                <redis.host>${redis.host.prod}</redis.host>
+                <redis.password>prod_redis_password</redis.password>
+                <rabbitmq.host>${rabbitmq.host.prod}</rabbitmq.host>
+                <rabbitmq.username>prod_mq_user</rabbitmq.username>
+                <rabbitmq.password>prod_mq_password</rabbitmq.password>
+            </properties>
+        </profile>
+    </profiles>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${spring-boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${spring-cloud.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-starter-openfeign</artifactId>
+                <version>${spring-cloud-openfeign.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-stream</artifactId>
+                <version>${spring-cloud-stream.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-stream-binder-rabbit</artifactId>
+                <version>${spring-cloud-stream.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.alibaba.cloud</groupId>
+                <artifactId>spring-cloud-alibaba-dependencies</artifactId>
+                <version>${spring-cloud-alibaba.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- Fastjson2 -->
+            <dependency>
+                <groupId>com.alibaba.fastjson2</groupId>
+                <artifactId>fastjson2</artifactId>
+                <version>${fastjson2.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.alibaba.fastjson2</groupId>
+                <artifactId>fastjson2-extension-spring6</artifactId>
+                <version>${fastjson2.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>${spring-boot.version}</version>
+            </plugin>
+        </plugins>
+    </build>
+</project> 

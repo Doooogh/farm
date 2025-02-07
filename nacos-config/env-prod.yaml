@@ -1,0 +1,12 @@
+mysql:
+  host: prod-mysql
+  port: 3306
+  database: oauth2_db
+  username: prod_user
+  password: prod_password
+
+redis:
+  host: prod-redis
+  port: 6379
+  password: prod_password
+  database: 0 

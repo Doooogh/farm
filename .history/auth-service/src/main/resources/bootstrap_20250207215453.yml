@@ -1,0 +1,18 @@
+spring:
+  application:
+    name: auth-service
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+        namespace: ${spring.profiles.active:dev}
+      config:
+        server-addr: localhost:8848
+        file-extension: yaml
+        namespace: ${spring.profiles.active:dev}
+        shared-configs:
+          - data-id: common-${spring.profiles.active:dev}.yaml
+            group: DEFAULT_GROUP
+            refresh: true
+  profiles:
+    active: dev 

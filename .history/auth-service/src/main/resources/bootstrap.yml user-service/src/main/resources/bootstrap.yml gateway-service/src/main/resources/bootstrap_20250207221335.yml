@@ -1,0 +1,22 @@
+spring:
+  application:
+    name: ${project.artifactId}
+  cloud:
+    nacos:
+      discovery:
+        server-addr: @nacos.server-addr@
+        namespace: ${spring.profiles.active}
+        username: @nacos.username@
+        password: @nacos.password@
+      config:
+        server-addr: @nacos.server-addr@
+        file-extension: yaml
+        namespace: ${spring.profiles.active}
+        username: @nacos.username@
+        password: @nacos.password@
+        shared-configs:
+          - data-id: common-${spring.profiles.active}.yaml
+            group: DEFAULT_GROUP
+            refresh: true
+  profiles:
+    active: @env@ 

@@ -1,0 +1,17 @@
+server:
+  ports:
+    auth-service: 9081
+    user-service: 9082
+    gateway-service: 9080
+
+spring:
+  datasource:
+    url: jdbc:mysql://${mysql.host}:${mysql.port}/${mysql.database}
+    username: ${mysql.username}
+    password: ${mysql.password}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  redis:
+    host: ${redis.host}
+    port: ${redis.port}
+    password: ${redis.password}
+    database: ${redis.database} 

@@ -1,0 +1,5 @@
+spring:
+  datasource:
+    url: jdbc:mysql://${db.user.host}:${db.user.port}/${db.user}?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&serverTimezone=GMT%2B8
+    username: ${db.user.username}
+    password: ${db.user.password} 
