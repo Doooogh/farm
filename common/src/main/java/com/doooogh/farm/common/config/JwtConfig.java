@@ -17,7 +17,7 @@ public class JwtConfig {
      * 用于生成和验证JWT令牌的签名
      * 建议在生产环境中使用足够长且安全的密钥
      */
-    private String secret = "your-secret-key-your-secret-key-your-secret-key";
+    private String secret;
     
     /**
      * 访问令牌过期时间（小时）

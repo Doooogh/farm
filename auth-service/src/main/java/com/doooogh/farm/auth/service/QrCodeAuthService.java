@@ -1,12 +1,18 @@
 package com.doooogh.farm.auth.service;
 
-import com.doooogh.farm.auth.exception.AuthException;
-import com.doooogh.farm.auth.model.TokenResponse;
-import com.doooogh.farm.auth.util.RedisUtil;
+import com.doooogh.farm.auth.dto.TokenResponse;
+import com.doooogh.farm.auth.entity.User;
+import com.doooogh.farm.auth.mapper.UserMapper;
+import com.doooogh.farm.common.exception.AuthException;
+import com.doooogh.farm.common.util.RedisUtil;
+import com.doooogh.farm.common.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+import com.doooogh.farm.common.exception.BusinessException;
 
 /**
  * 二维码扫码登录服务
@@ -17,6 +23,9 @@ import java.util.concurrent.TimeUnit;
 public class QrCodeAuthService {
     
     private final RedisUtil redisUtil;
+    private final UserMapper userMapper;
+    private final JwtUtil jwtUtil;
+    private final UserDetailsService userDetailsService;
     
     /**
      * 生成二维码标识
@@ -38,6 +47,10 @@ public class QrCodeAuthService {
      * @param userId 用户ID
      */
     public void confirmLogin(String qrCodeId, String userId) {
+        String status = (String) redisUtil.get("qrcode:" + qrCodeId);
+        if (status == null) {
+            throw BusinessException.invalidParameter("二维码已过期");
+        }
         redisUtil.set("qrcode:" + qrCodeId, userId, 1, TimeUnit.MINUTES);
     }
     
@@ -50,14 +63,32 @@ public class QrCodeAuthService {
      * @throws AuthException 当二维码过期时抛出
      */
     public TokenResponse checkQrCodeStatus(String qrCodeId) {
-        String status = redisUtil.get("qrcode:" + qrCodeId);
+        String status = (String) redisUtil.get("qrcode:" + qrCodeId);
         if (status == null) {
-            throw new AuthException(401003, "二维码已过期");
+            throw BusinessException.invalidParameter("二维码已过期");
         }
         if ("WAITING".equals(status)) {
             return TokenResponse.builder().status("WAITING").build();
         }
+        
         // 生成访问令牌
-        return generateTokens(status);
+        User user = userMapper.selectById(status);
+        if (user == null) {
+            throw BusinessException.notFound("用户不存在");
+        }
+        
+        // 加载用户详情
+        UserDetails userDetails = userDetailsService.loadUserByUsername(user.getUsername());
+        
+        // 生成令牌
+        String accessToken = jwtUtil.generateToken(userDetails, false);
+        String refreshToken = jwtUtil.generateToken(userDetails, true);
+        
+        return TokenResponse.builder()
+            .accessToken(accessToken)
+            .refreshToken(refreshToken)
+            .tokenType("Bearer")
+            .expiresIn(jwtUtil.getAccessTokenExpiration() * 3600)
+            .build();
     }
 } 

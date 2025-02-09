@@ -18,25 +18,67 @@
 
     <properties>
         <java.version>1.8</java.version>
-        <spring-boot.version>3.2.3</spring-boot.version>
-        <spring-cloud.version>2023.0.0</spring-cloud.version>
-        <jwt.version>0.12.5</jwt.version>
-        <spring-cloud-openfeign.version>4.1.0</spring-cloud-openfeign.version>
-        <spring-cloud-stream.version>4.1.0</spring-cloud-stream.version>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
+        <maven.compiler.fork>true</maven.compiler.fork>
+        <spring-boot.version>2.3.12.RELEASE</spring-boot.version>
+        <spring-cloud.version>Hoxton.SR12</spring-cloud.version>
+        <spring-cloud-alibaba.version>2.2.7.RELEASE</spring-cloud-alibaba.version>
+
+        <jwt.version>0.11.5</jwt.version>
+        <lombok.version>1.18.30</lombok.version>
+        <spring-cloud-openfeign.version>3.1.9</spring-cloud-openfeign.version>
+        <spring-cloud-stream.version>3.2.9</spring-cloud-stream.version>
         <rabbitmq.version>3.12.12</rabbitmq.version>
-        <spring-cloud-alibaba.version>2022.0.0.0</spring-cloud-alibaba.version>
         <fastjson2.version>2.0.47</fastjson2.version>
+        <druid.version>1.2.20</druid.version>
+
+        <!-- Redis开发环境配置 -->
+        <redis.host.dev>${env.REDIS_HOST_DEV:localhost}</redis.host.dev>
+        <redis.port.dev>${env.REDIS_PORT_DEV:6379}</redis.port.dev>
+        <redis.password.dev>${env.REDIS_PASSWORD_DEV:}</redis.password.dev>
+        <redis.database.dev>${env.REDIS_DATABASE_DEV:0}</redis.database.dev>
+        
+        <!-- RabbitMQ开发环境配置 -->
+        <rabbitmq.host.dev>${env.RABBITMQ_HOST_DEV:localhost}</rabbitmq.host.dev>
+        <rabbitmq.port.dev>${env.RABBITMQ_PORT_DEV:5672}</rabbitmq.port.dev>
+        <rabbitmq.username.dev>${env.RABBITMQ_USERNAME_DEV:guest}</rabbitmq.username.dev>
+        <rabbitmq.password.dev>${env.RABBITMQ_PASSWORD_DEV:guest}</rabbitmq.password.dev>
+        
+        <!-- Nacos开发环境配置 -->
+<!--        <nacos.host.dev>${env.NACOS_HOST_DEV:localhost}</nacos.host.dev>-->
+<!--        <nacos.port.dev>${env.NACOS_PORT_DEV:8848}</nacos.port.dev>-->
+<!--        <nacos.username.dev>${env.NACOS_USERNAME_DEV:nacos}</nacos.username.dev>-->
+<!--        <nacos.password.dev>${env.NACOS_PASSWORD_DEV:nacos}</nacos.password.dev>-->
+
+
+        <nacos.host.dev>127.0.0.1</nacos.host.dev>
+        <nacos.port.dev>18848</nacos.port.dev>
+        <nacos.username.dev></nacos.username.dev>
+        <nacos.password.dev></nacos.password.dev>
+
+        <!-- Redis生产环境配置 -->
+        <redis.host.prod>${env.REDIS_HOST_PROD:redis-prod}</redis.host.prod>
+        <redis.port.prod>${env.REDIS_PORT_PROD:6379}</redis.port.prod>
+        <redis.password.prod>${env.REDIS_PASSWORD_PROD:redis_prod_pass}</redis.password.prod>
+        <redis.database.prod>${env.REDIS_DATABASE_PROD:0}</redis.database.prod>
+        
+        <!-- RabbitMQ生产环境配置 -->
+        <rabbitmq.host.prod>${env.RABBITMQ_HOST_PROD:rabbitmq-prod}</rabbitmq.host.prod>
+        <rabbitmq.port.prod>${env.RABBITMQ_PORT_PROD:5672}</rabbitmq.port.prod>
+        <rabbitmq.username.prod>${env.RABBITMQ_USERNAME_PROD:farm_mq}</rabbitmq.username.prod>
+        <rabbitmq.password.prod>${env.RABBITMQ_PASSWORD_PROD:farm_mq_pass}</rabbitmq.password.prod>
+        
+        <!-- Nacos生产环境配置 -->
+        <nacos.host.prod>${env.NACOS_HOST_PROD:nacos-prod}</nacos.host.prod>
+        <nacos.port.prod>${env.NACOS_PORT_PROD:8848}</nacos.port.prod>
+        <nacos.username.prod>${env.NACOS_USERNAME_PROD:nacos}</nacos.username.prod>
+        <nacos.password.prod>${env.NACOS_PASSWORD_PROD:nacos_prod_pass}</nacos.password.prod>
 
         <!-- 服务端口配置 -->
         <auth-service.port>8081</auth-service.port>
         <user-service.port>8082</user-service.port>
         <gateway-service.port>8080</gateway-service.port>
-        
-        <!-- Nacos配置 -->
-        <nacos.host>localhost</nacos.host>
-        <nacos.port>8848</nacos.port>
-        <nacos.namespace>dev</nacos.namespace>
-        <nacos.group>DEFAULT_GROUP</nacos.group>
 
         <!-- 各服务数据库名称 -->
         <db.name.prefix>farm_cloud</db.name.prefix>
@@ -45,10 +87,15 @@
         <db.system>${db.name.prefix}_system</db.system>
         
         <!-- 认证服务数据库配置 -->
-        <db.auth.host>${env.DB_AUTH_HOST:localhost}</db.auth.host>
-        <db.auth.port>${env.DB_AUTH_PORT:3306}</db.auth.port>
-        <db.auth.username>${env.DB_AUTH_USERNAME:farm_auth}</db.auth.username>
-        <db.auth.password>${env.DB_AUTH_PASSWORD:farm_auth_pass}</db.auth.password>
+<!--        <db.auth.host>${env.DB_AUTH_HOST:localhost}</db.auth.host>-->
+<!--        <db.auth.port>${env.DB_AUTH_PORT:3306}</db.auth.port>-->
+<!--        <db.auth.username>${env.DB_AUTH_USERNAME:farm_auth}</db.auth.username>-->
+<!--        <db.auth.password>${env.DB_AUTH_PASSWORD:farm_auth_pass}</db.auth.password>-->
+
+        <db.auth.host>localhost</db.auth.host>
+        <db.auth.port>13306</db.auth.port>
+        <db.auth.username>root</db.auth.username>
+        <db.auth.password>root</db.auth.password>
         
         <!-- 用户服务数据库配置 -->
         <db.user.host>${env.DB_USER_HOST:localhost}</db.user.host>
@@ -162,13 +209,33 @@
             </dependency>
             <dependency>
                 <groupId>com.alibaba.fastjson2</groupId>
-                <artifactId>fastjson2-extension-spring6</artifactId>
+                <artifactId>fastjson2-extension-spring5</artifactId>
                 <version>${fastjson2.version}</version>
+            </dependency>
+            <!-- Druid -->
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>druid-spring-boot-starter</artifactId>
+                <version>${druid.version}</version>
+            </dependency>
+            <!-- Lombok -->
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>mysql</groupId>
+                <artifactId>mysql-connector-java</artifactId>
+                <version>8.0.33</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
 
     <build>
+        <sourceDirectory>src/main/java</sourceDirectory>
+        <testSourceDirectory>src/test/java</testSourceDirectory>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
@@ -188,12 +255,13 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.11.0</version>
                 <configuration>
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
+                    <source>${maven.compiler.source}</source>
+                    <target>${maven.compiler.target}</target>
+                    <fork>${maven.compiler.fork}</fork>
+                    <encoding>UTF-8</encoding>
                     <compilerArgs>
                         <arg>-parameters</arg>
                     </compilerArgs>
-                    <encoding>UTF-8</encoding>
                 </configuration>
             </plugin>
         </plugins>
@@ -201,6 +269,12 @@
             <resource>
                 <directory>src/main/resources</directory>
                 <filtering>true</filtering>
+            </resource>
+            <resource>
+                <directory>src/main/java</directory>
+                <includes>
+                    <include>**/*.xml</include>
+                </includes>
             </resource>
         </resources>
     </build>

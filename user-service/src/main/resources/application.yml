@@ -1,52 +1,38 @@
 server:
-  port: ${server.ports.user-service}
+  port: ${user-service.port}
 
 spring:
-  profiles:
-    active: ${spring.profiles.active:dev}
-  application:
-    name: user-service
   security:
     oauth2:
       resourceserver:
         jwt:
           issuer-uri: http://localhost:8081
-  cloud:
-    stream:
-      bindings:
-        userCreatedOutput:
-          destination: user.created
-          content-type: application/json
-        userUpdatedOutput:
-          destination: user.updated
-          content-type: application/json
-      rabbit:
-        bindings:
-          userCreatedOutput:
-            producer:
-              routing-key-expression: headers.eventType
-          userUpdatedOutput:
-            producer:
-              routing-key-expression: headers.eventType
-    nacos:
-      discovery:
-        enabled: true
-      server-addr: ${nacos.host}:${nacos.port}
-      namespace: ${nacos.namespace:}
-      group: ${nacos.group:DEFAULT_GROUP}
-
   rabbitmq:
     host: localhost
     port: 5672
     username: guest
     password: guest
-    
-feign:
-  auth-service:
-    url: http://localhost:8081
-  client:
-    config:
-      default:
-        connectTimeout: 5000
-        readTimeout: 5000
-        loggerLevel: full 
+  datasource:
+    url: ${MYSQL_URL}
+    username: ${MYSQL_USERNAME}
+    password: ${MYSQL_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    type: com.alibaba.druid.pool.DruidDataSource
+    druid:
+      initial-size: 5
+      min-idle: 5
+      max-active: 20
+      max-wait: 60000
+
+  redis:
+    host: ${REDIS_HOST}
+    port: ${REDIS_PORT:16379}
+    password: ${REDIS_PASSWORD:}
+    database: ${REDIS_DATABASE:0}
+    lettuce:
+      pool:
+        max-active: 8
+        max-idle: 8
+        min-idle: 0
+        max-wait: -1ms
+

@@ -1,3 +1,23 @@
+package com.doooogh.farm.auth.service;
+
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.doooogh.farm.auth.entity.Permission;
+import com.doooogh.farm.auth.entity.RolePermission;
+import com.doooogh.farm.auth.exception.ServiceException;
+import com.doooogh.farm.auth.mapper.PermissionMapper;
+import com.doooogh.farm.auth.mapper.RolePermissionMapper;
+import com.doooogh.farm.auth.model.PermissionTree;
+import com.doooogh.farm.common.util.RedisUtil;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+
 /**
  * 权限服务
  */
@@ -56,7 +76,7 @@ public class PermissionService {
         }
         
         // 检查是否有子权限
-        Integer childCount = permissionMapper.selectCount(
+        Long childCount = permissionMapper.selectCount(
             new QueryWrapper<Permission>().eq("parent_id", permissionId)
         );
         if (childCount > 0) {
@@ -78,7 +98,7 @@ public class PermissionService {
     public List<PermissionTree> getPermissionTree() {
         // 从缓存获取
         String cacheKey = "permission:tree";
-        List<PermissionTree> tree = redisUtil.get(cacheKey);
+        List<PermissionTree> tree = (List<PermissionTree>) redisUtil.get(cacheKey);
         if (tree != null) {
             return tree;
         }

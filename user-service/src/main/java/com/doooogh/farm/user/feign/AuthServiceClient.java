@@ -1,3 +1,13 @@
+package com.doooogh.farm.user.feign;
+
+import com.doooogh.farm.common.result.Result;
+import com.doooogh.farm.user.model.TokenInfo;
+import com.doooogh.farm.user.model.UserInfo;
+import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestHeader;
+
 /**
  * 认证服务Feign客户端
  * 用于调用认证服务的接口

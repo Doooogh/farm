@@ -5,6 +5,7 @@ import com.doooogh.farm.auth.dto.TokenResponse;
 import com.doooogh.farm.auth.service.AuthService;
 import com.doooogh.farm.common.result.Result;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -27,7 +28,14 @@ public class AuthController {
      */
     @PostMapping("/login")
     public Result<TokenResponse> login(@RequestBody LoginRequest request) {
-        return Result.success(authService.login(request));
+        try {
+            TokenResponse response = authService.login(request);
+            return Result.ok(response);
+        } catch (BadCredentialsException e) {
+            return Result.fail(401, "用户名或密码错误");
+        } catch (Exception e) {
+            return Result.fail("登录失败");
+        }
     }
 
     /**
@@ -39,7 +47,12 @@ public class AuthController {
      */
     @PostMapping("/refresh")
     public Result<TokenResponse> refresh(@RequestHeader("Authorization") String refreshToken) {
-        return Result.success(authService.refresh(refreshToken));
+        try {
+            TokenResponse tokenResponse = authService.refresh(refreshToken);
+            return Result.ok(tokenResponse);
+        } catch (Exception e) {
+            return Result.fail("刷新令牌失败");
+        }
     }
 
     /**
@@ -52,6 +65,11 @@ public class AuthController {
     @PostMapping("/logout")
     public Result<Void> logout(@RequestHeader("Authorization") String accessToken) {
         authService.logout(accessToken);
-        return Result.success(null);
+        return Result.ok();
+    }
+
+    @GetMapping("/status")
+    public String status() {
+        return "Auth service is running";
     }
 } 

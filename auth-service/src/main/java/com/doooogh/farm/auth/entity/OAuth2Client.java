@@ -4,6 +4,9 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.doooogh.farm.common.entity.BaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 /**
  * OAuth2客户端实体类
@@ -12,7 +15,12 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @TableName("oauth2_client")
+@Entity
+@Table(name = "oauth2_client")
 public class OAuth2Client extends BaseEntity {
+    
+    @Id
+    private Long id;
     
     /**
      * 客户端ID

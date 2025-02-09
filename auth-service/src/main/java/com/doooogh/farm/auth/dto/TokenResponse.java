@@ -33,4 +33,6 @@ public class TokenResponse {
      * 固定值："Bearer"
      */
     private String tokenType;
+    
+    private String status;
 } 

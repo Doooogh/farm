@@ -1,10 +1,16 @@
 package com.doooogh.farm.gateway.filter;
 
+import com.doooogh.farm.common.result.Result;
+import com.doooogh.farm.common.util.JsonUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
+import org.springframework.core.io.buffer.DataBuffer;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.server.reactive.ServerHttpRequest;
+import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
@@ -34,5 +40,23 @@ public class GlobalAuthFilter implements GlobalFilter, Ordered {
     @Override
     public int getOrder() {
         return -1; // 在其他过滤器之前执行
+    }
+
+    private Mono<Void> unauthorized(ServerHttpResponse response) {
+        Result<Void> result = Result.fail(401, "未授权访问");
+        return response(response, result);
+    }
+
+    private Mono<Void> forbidden(ServerHttpResponse response) {
+        Result<Void> result = Result.fail(403, "没有权限访问");
+        return response(response, result);
+    }
+
+    private Mono<Void> response(ServerHttpResponse response, Result<?> result) {
+        response.setStatusCode(HttpStatus.OK);
+        response.getHeaders().setContentType(MediaType.APPLICATION_JSON);
+        String body = JsonUtils.toJsonString(result);
+        DataBuffer buffer = response.bufferFactory().wrap(body.getBytes());
+        return response.writeWith(Mono.just(buffer));
     }
 } 

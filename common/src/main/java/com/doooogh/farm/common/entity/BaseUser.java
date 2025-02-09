@@ -1,3 +1,12 @@
+package com.doooogh.farm.common.entity;
+
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.doooogh.farm.common.entity.BaseEntity;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+
+import java.util.List;
+
 /**
  * 基础用户实体
  * 定义用户的通用属性

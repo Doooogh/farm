@@ -1,3 +1,8 @@
+package com.doooogh.farm.auth.entity;
+
+import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.Data;
+
 /**
  * 角色权限关联实体
  */

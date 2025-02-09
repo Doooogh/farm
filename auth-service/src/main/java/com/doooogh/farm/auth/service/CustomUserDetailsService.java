@@ -4,6 +4,9 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.doooogh.farm.auth.entity.User;
 import com.doooogh.farm.auth.entity.UserRole;
+import com.doooogh.farm.auth.exception.AuthException;
+import com.doooogh.farm.auth.mapper.UserMapper;
+import com.doooogh.farm.auth.mapper.UserRoleMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -39,28 +42,27 @@ public class CustomUserDetailsService implements UserDetailsService {
         // 查询用户信息
         User user = userMapper.selectOne(new QueryWrapper<User>()
             .eq("username", username)
-            .eq("status", 1)  // 只查询状态正常的用户
-            .eq("deleted", 0));  // 排除已删除的用户
+            .eq("status", 1));
             
         if (user == null) {
-            throw new UsernameNotFoundException("用户不存在");
+            throw new AuthException(401, "用户不存在");
         }
         
         // 查询用户角色
-        List<UserRole> userRoles = userRoleMapper.selectList(
+        List<UserRole> roles = userRoleMapper.selectList(
             new QueryWrapper<UserRole>().eq("user_id", user.getId())
         );
         
         // 转换为Spring Security的Authorities
-        List<GrantedAuthority> authorities = userRoles.stream()
+        List<SimpleGrantedAuthority> authorities = roles.stream()
             .map(role -> new SimpleGrantedAuthority(role.getRoleCode()))
             .collect(Collectors.toList());
         
         // 构建UserDetails对象
-        return org.springframework.security.core.userdetails.User
-            .withUsername(user.getUsername())
-            .password(user.getPassword())
-            .authorities(authorities)
-            .build();
+        return new org.springframework.security.core.userdetails.User(
+            user.getUsername(),
+            user.getPassword(),
+            authorities
+        );
     }
 } 

@@ -2,9 +2,13 @@ package com.doooogh.farm.common.util;
 
 import com.doooogh.farm.common.config.JwtConfig;
 import com.doooogh.farm.common.exception.AuthException;
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
@@ -13,6 +17,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
 
 /**
  * JWT工具类
@@ -24,11 +29,16 @@ public class JwtUtil {
 
     private final JwtConfig jwtConfig;
 
+    @Value("${jwt.secret}")
+    private String secret;
+
+    @Value("${jwt.expiration}")
+    private Long expiration;
+
     /**
      * 生成JWT令牌
-     * 根据用户信息和令牌类型生成对应的JWT令牌
      *
-     * @param userDetails 用户详情信息
+     * @param userDetails 用户信息
      * @param isRefreshToken 是否为刷新令牌
      * @return JWT令牌字符串
      */
@@ -39,8 +49,8 @@ public class JwtUtil {
         claims.put("type", isRefreshToken ? "refresh_token" : "access_token");
         
         long expiration = isRefreshToken ? 
-            jwtConfig.getRefreshTokenExpiration() * 24 * 60 * 60 * 1000 : 
-            jwtConfig.getTokenExpiration() * 60 * 60 * 1000;
+            jwtConfig.getRefreshTokenExpiration() * 24 * 60 * 60 * 1000 : // 转换为毫秒
+            jwtConfig.getTokenExpiration() * 60 * 60 * 1000; // 转换为毫秒
             
         return Jwts.builder()
             .setClaims(claims)
@@ -53,16 +63,34 @@ public class JwtUtil {
     }
 
     /**
-     * 从令牌中获取用户名
-     *
-     * @param token JWT令牌
-     * @return 用户名
-     * @throws AuthException 当令牌无效或过期时抛出
+     * 从用户名生成令牌（用于不需要刷新令牌的场景）
      */
-    public String getUsernameFromToken(String token) {
+    public String generateToken(String username) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("username", username);
+        claims.put("type", "access_token");
+        
+        return Jwts.builder()
+            .setClaims(claims)
+            .setSubject(username)
+            .setIssuer(jwtConfig.getIssuer())
+            .setIssuedAt(new Date())
+            .setExpiration(new Date(System.currentTimeMillis() + 
+                jwtConfig.getTokenExpiration() * 60 * 60 * 1000))
+            .signWith(getSigningKey())
+            .compact();
+    }
+
+    /**
+     * 验证令牌
+     */
+    public boolean validateToken(String token) {
         try {
-            Claims claims = getClaimsFromToken(token);
-            return claims.getSubject();
+            Jwts.parserBuilder()
+                .setSigningKey(getSigningKey())
+                .build()
+                .parseClaimsJws(token);
+            return true;
         } catch (ExpiredJwtException e) {
             throw AuthException.tokenExpired();
         } catch (Exception e) {
@@ -71,13 +99,79 @@ public class JwtUtil {
     }
 
     /**
-     * 验证令牌有效性
-     *
-     * @param token JWT令牌
-     * @param userDetails 用户详情信息
-     * @return 令牌是否有效
-     * @throws AuthException 当令牌无效或过期时抛出
+     * 从令牌中获取用户名
      */
+    public String getUsernameFromToken(String token) {
+        Claims claims = Jwts.parserBuilder()
+            .setSigningKey(getSigningKey())
+            .build()
+            .parseClaimsJws(token)
+            .getBody();
+        return claims.getSubject();
+    }
+
+    /**
+     * 获取访问令牌过期时间（小时）
+     */
+    public Long getAccessTokenExpiration() {
+        return jwtConfig.getTokenExpiration();
+    }
+
+    /**
+     * 获取刷新令牌过期时间（天）
+     */
+    public Long getRefreshTokenExpiration() {
+        return jwtConfig.getRefreshTokenExpiration();
+    }
+
+    /**
+     * 获取签名密钥
+     */
+    private SecretKey getSigningKey() {
+        byte[] keyBytes = jwtConfig.getSecret().getBytes(StandardCharsets.UTF_8);
+        return Keys.hmacShaKeyFor(keyBytes);
+    }
+
+    public String extractUsername(String token) {
+        return extractClaim(token, Claims::getSubject);
+    }
+
+    public Date extractExpiration(String token) {
+        return extractClaim(token, Claims::getExpiration);
+    }
+
+    public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
+        final Claims claims = extractAllClaims(token);
+        return claimsResolver.apply(claims);
+    }
+
+    private Claims extractAllClaims(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(getSigningKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+    }
+
+    private Boolean isTokenExpired(String token) {
+        return extractExpiration(token).before(new Date());
+    }
+
+    public String generateToken(UserDetails userDetails) {
+        Map<String, Object> claims = new HashMap<>();
+        return createToken(claims, userDetails.getUsername());
+    }
+
+    private String createToken(Map<String, Object> claims, String subject) {
+        return Jwts.builder()
+                .setClaims(claims)
+                .setSubject(subject)
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + expiration * 1000))
+                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
+                .compact();
+    }
+
     public boolean validateToken(String token, UserDetails userDetails) {
         try {
             String username = getUsernameFromToken(token);
@@ -91,12 +185,6 @@ public class JwtUtil {
         }
     }
 
-    /**
-     * 判断令牌是否可以被刷新
-     *
-     * @param token JWT令牌
-     * @return 是否可以刷新
-     */
     public boolean canTokenBeRefreshed(String token) {
         try {
             Claims claims = getClaimsFromToken(token);
@@ -107,28 +195,11 @@ public class JwtUtil {
         }
     }
 
-    /**
-     * 从令牌中获取Claims信息
-     *
-     * @param token JWT令牌
-     * @return Claims对象
-     * @throws JwtException 当令牌解析失败时抛出
-     */
     private Claims getClaimsFromToken(String token) {
         return Jwts.parserBuilder()
             .setSigningKey(getSigningKey())
             .build()
             .parseClaimsJws(token)
             .getBody();
-    }
-
-    /**
-     * 获取签名密钥
-     *
-     * @return 用于签名的密钥对象
-     */
-    private SecretKey getSigningKey() {
-        byte[] keyBytes = jwtConfig.getSecret().getBytes(StandardCharsets.UTF_8);
-        return Keys.hmacShaKeyFor(keyBytes);
     }
 } 

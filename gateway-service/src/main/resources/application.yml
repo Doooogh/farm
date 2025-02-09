@@ -1,9 +1,7 @@
 server:
-  port: ${server.ports.gateway-service}
+  port: ${gateway-service.port}
 
 spring:
-  application:
-    name: gateway-service
   cloud:
     gateway:
       discovery:
@@ -39,15 +37,9 @@ spring:
               args:
                 name: userFallback
                 fallbackUri: forward:/fallback
-  profiles:
-    active: ${spring.profiles.active:dev}
-  nacos:
-    discovery:
-      enabled: true
-    server-addr: ${nacos.host}:${nacos.port}
-    namespace: ${nacos.namespace:}
-    group: ${nacos.group:DEFAULT_GROUP}
-        
+  main:
+    web-application-type: reactive
+
   security:
     oauth2:
       resourceserver:
@@ -56,10 +48,16 @@ spring:
           jwk-set-uri: http://auth-service/oauth2/jwks
           
   redis:
-    host: @redis.host@
-    port: 6379
-    password: @redis.password@
-    database: 0
+    host: ${REDIS_HOST}
+    port: ${REDIS_PORT:16379}
+    password: ${REDIS_PASSWORD:}
+    database: ${REDIS_DATABASE:0}
+    lettuce:
+      pool:
+        max-active: 8
+        max-idle: 8
+        min-idle: 0
+        max-wait: -1ms
 
 logging:
   level:

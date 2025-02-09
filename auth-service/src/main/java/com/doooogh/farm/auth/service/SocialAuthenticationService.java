@@ -1,8 +1,15 @@
 package com.doooogh.farm.auth.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.doooogh.farm.auth.dto.TokenResponse;
+import com.doooogh.farm.auth.entity.User;
+import com.doooogh.farm.auth.mapper.UserMapper;
+import com.doooogh.farm.auth.model.WechatUserInfo;
+import com.doooogh.farm.common.util.JwtUtil;
 import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+
 
 /**
  * 社交登录认证服务
@@ -14,6 +21,7 @@ public class SocialAuthenticationService {
     
     private final UserMapper userMapper;
     private final JwtUtil jwtUtil;
+    private final WechatService wechatService;
     
     /**
      * 微信登录处理
@@ -24,7 +32,7 @@ public class SocialAuthenticationService {
      */
     public TokenResponse wechatLogin(String code) {
         // 1. 获取微信用户信息
-        WechatUserInfo wechatUser = getWechatUserInfo(code);
+        WechatUserInfo wechatUser = wechatService.getWechatUserInfo(code);
         
         // 2. 查找或创建用户
         User user = userMapper.selectOne(new QueryWrapper<User>()
@@ -35,7 +43,11 @@ public class SocialAuthenticationService {
         }
         
         // 3. 生成访问令牌
-        return generateTokens(user);
+        return TokenResponse.builder()
+            .accessToken(jwtUtil.generateToken(user.getUsername()))
+            .tokenType("Bearer")
+            .expiresIn(jwtUtil.getAccessTokenExpiration() * 3600)
+            .build();
     }
     
     /**
@@ -54,5 +66,3 @@ public class SocialAuthenticationService {
         return user;
     }
 }
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
- 

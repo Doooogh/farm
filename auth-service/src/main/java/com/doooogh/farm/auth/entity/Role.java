@@ -1,3 +1,10 @@
+package com.doooogh.farm.auth.entity;
+
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.doooogh.farm.common.entity.BaseEntity;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+
 /**
  * 角色实体
  */

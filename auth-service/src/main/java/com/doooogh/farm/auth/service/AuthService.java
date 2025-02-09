@@ -3,23 +3,24 @@ package com.doooogh.farm.auth.service;
 import com.doooogh.farm.auth.dto.LoginRequest;
 import com.doooogh.farm.auth.dto.TokenResponse;
 import com.doooogh.farm.common.exception.AuthException;
+import com.doooogh.farm.common.exception.ServiceException;
+import com.doooogh.farm.common.result.Result;
+import com.doooogh.farm.common.util.JwtUtil;
 import com.doooogh.farm.common.util.RedisUtil;
+import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.authentication.LockedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.core.userdetails.BadCredentialsException;
 import org.springframework.stereotype.Service;
 
-import java.time.Duration;
-import java.time.Instant;
 import java.util.concurrent.TimeUnit;
-
-import io.jsonwebtoken.JwtException;
 
 /**
  * 认证服务
@@ -74,8 +75,10 @@ public class AuthService {
             String refreshToken = jwtUtil.generateToken(userDetails, true);
             
             // 3. 将刷新令牌存入Redis
-            String refreshTokenKey = "refresh_token:" + userDetails.getUsername();
-            redisUtil.set(refreshTokenKey, refreshToken, jwtUtil.getRefreshTokenExpiration(), TimeUnit.HOURS);
+            redisUtil.set("refresh_token:" + userDetails.getUsername(), 
+                refreshToken, 
+                jwtUtil.getRefreshTokenExpiration(), 
+                TimeUnit.DAYS);
             
             // 4. 返回令牌信息
             return TokenResponse.builder()
@@ -86,7 +89,13 @@ public class AuthService {
                 .build();
                 
         } catch (BadCredentialsException e) {
-            throw new AuthException(401001, "用户名或密码错误");
+            throw new AuthException(401, "用户名或密码错误");
+        } catch (DisabledException e) {
+            throw new AuthException(401, "账户已被禁用");
+        } catch (LockedException e) {
+            throw new AuthException(401, "账户已被锁定");
+        } catch (Exception e) {
+            throw new ServiceException("登录服务异常");
         }
     }
 
@@ -101,17 +110,17 @@ public class AuthService {
     public TokenResponse refresh(String refreshToken) {
         try {
             // 1. 验证刷新令牌
-            if (!jwtUtil.validateRefreshToken(refreshToken)) {
-                throw new AuthException(401002, "刷新令牌无效或已过期");
+            if (!jwtUtil.validateToken(refreshToken)) {
+                throw new AuthException(401, "无效的刷新令牌");
             }
             
             // 2. 从令牌中获取用户名
             String username = jwtUtil.getUsernameFromToken(refreshToken);
             
-            // 3. 检查Redis中的刷新令牌是否存在且匹配
+            // 3. 检查Redis中的刷新令牌
             String storedToken = (String) redisUtil.get("refresh_token:" + username);
             if (storedToken == null || !storedToken.equals(refreshToken)) {
-                throw new AuthException(401002, "刷新令牌已失效");
+                throw new AuthException(401, "刷新令牌已失效");
             }
             
             // 4. 生成新的令牌
@@ -120,8 +129,10 @@ public class AuthService {
             String newRefreshToken = jwtUtil.generateToken(userDetails, true);
             
             // 5. 更新Redis中的刷新令牌
-            redisUtil.set("refresh_token:" + username, newRefreshToken, 
-                jwtUtil.getRefreshTokenExpiration(), TimeUnit.HOURS);
+            redisUtil.set("refresh_token:" + username, 
+                newRefreshToken, 
+                jwtUtil.getRefreshTokenExpiration(), 
+                TimeUnit.DAYS);
             
             return TokenResponse.builder()
                 .accessToken(newAccessToken)
@@ -131,7 +142,9 @@ public class AuthService {
                 .build();
                 
         } catch (JwtException e) {
-            throw new AuthException(401002, "刷新令牌解析失败");
+            throw new AuthException(401, "刷新令牌解析失败");
+        } catch (Exception e) {
+            throw new ServiceException("刷新令牌服务异常");
         }
     }
 
@@ -146,6 +159,10 @@ public class AuthService {
             String username = jwtUtil.getUsernameFromToken(accessToken);
             // 从Redis中删除刷新令牌
             redisUtil.delete("refresh_token:" + username);
+            // 将访问令牌加入黑名单
+            redisUtil.set("token_blacklist:" + accessToken, "", 
+                jwtUtil.getAccessTokenExpiration(), 
+                TimeUnit.HOURS);
         } catch (JwtException e) {
             log.warn("Invalid token during logout", e);
         }

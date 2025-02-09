@@ -1,3 +1,20 @@
+package com.doooogh.farm.auth.controller;
+
+import com.doooogh.farm.auth.entity.Permission;
+import com.doooogh.farm.auth.model.PermissionTree;
+import com.doooogh.farm.auth.service.PermissionService;
+import com.doooogh.farm.common.result.Result;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+import java.util.List;
+
 /**
  * 权限管理控制器
  */
@@ -13,7 +30,7 @@ public class PermissionController {
     @Operation(summary = "创建权限")
     @PreAuthorize("hasRole('ADMIN')")
     public Result<Permission> createPermission(@RequestBody @Valid Permission permission) {
-        return Result.success(permissionService.createPermission(permission));
+        return Result.ok(permissionService.createPermission(permission));
     }
     
     @PutMapping("/{id}")
@@ -22,7 +39,7 @@ public class PermissionController {
     public Result<Void> updatePermission(@PathVariable Long id, @RequestBody @Valid Permission permission) {
         permission.setId(id);
         permissionService.updatePermission(permission);
-        return Result.success();
+        return Result.ok();
     }
     
     @DeleteMapping("/{id}")
@@ -30,12 +47,12 @@ public class PermissionController {
     @PreAuthorize("hasRole('ADMIN')")
     public Result<Void> deletePermission(@PathVariable Long id) {
         permissionService.deletePermission(id);
-        return Result.success();
+        return Result.ok();
     }
     
     @GetMapping("/tree")
     @Operation(summary = "获取权限树")
     public Result<List<PermissionTree>> getPermissionTree() {
-        return Result.success(permissionService.getPermissionTree());
+        return Result.ok(permissionService.getPermissionTree());
     }
 } 

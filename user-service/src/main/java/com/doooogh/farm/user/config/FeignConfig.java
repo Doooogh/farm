@@ -2,6 +2,14 @@
  * Feign配置类
  * 配置Feign客户端的行为
  */
+package com.doooogh.farm.user.config;
+
+import com.doooogh.farm.user.feign.FeignErrorDecoder;
+import feign.RequestInterceptor;
+import feign.codec.ErrorDecoder;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
 @Configuration
 public class FeignConfig {
     

@@ -13,7 +13,7 @@ import reactor.core.publisher.Mono;
 public class FallbackController {
 
     @GetMapping("/fallback")
-    public Mono<Result<Void>> fallback() {
-        return Mono.just(Result.error(503001, "服务暂时不可用，请稍后重试"));
+    public Result<Void> fallback() {
+        return Result.fail(503, "服务不可用，请稍后重试");
     }
 } 

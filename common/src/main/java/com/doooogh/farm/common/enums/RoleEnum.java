@@ -1,7 +1,12 @@
+package com.doooogh.farm.common.enums;
+
+import lombok.Getter;
+
 /**
  * 角色枚举
  * 定义系统中的所有角色
  */
+@Getter
 public enum RoleEnum {
     
     ADMIN("ROLE_ADMIN", "管理员"),

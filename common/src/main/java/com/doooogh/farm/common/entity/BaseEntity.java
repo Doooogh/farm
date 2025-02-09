@@ -16,6 +16,8 @@ import java.time.LocalDateTime;
 @Data
 public class BaseEntity implements Serializable {
     
+    private static final long serialVersionUID = 1L;
+
     /**
      * 主键ID
      * 使用雪花算法生成
@@ -31,17 +33,17 @@ public class BaseEntity implements Serializable {
     private LocalDateTime createTime;
     
     /**
+     * 创建人ID
+     */
+    @TableField(fill = FieldFill.INSERT)
+    private Long createBy;
+    
+    /**
      * 更新时间
      * 由MyBatis-Plus自动填充
      */
     @TableField(fill = FieldFill.INSERT_UPDATE)
     private LocalDateTime updateTime;
-    
-    /**
-     * 创建人ID
-     */
-    @TableField(fill = FieldFill.INSERT)
-    private Long createBy;
     
     /**
      * 更新人ID
@@ -53,6 +55,6 @@ public class BaseEntity implements Serializable {
      * 逻辑删除标志
      * true表示已删除
      */
-    @TableField(fill = FieldFill.INSERT)
-    private Boolean deleted;
+    @TableField
+    private Boolean deleted = false;
 } 
