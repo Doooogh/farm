@@ -1,0 +1,32 @@
+# MyBatis-Plus配置
+mybatis-plus:
+  mapper-locations: classpath*:/mapper/**/*.xml
+  type-aliases-package: com.doooogh.farm.**.entity
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+    db-config:
+      logic-delete-field: deleted
+      logic-delete-value: 1
+      logic-not-delete-value: 0 
+
+jwt:
+  secret: your-secret-key-your-secret-key-your-secret-key
+  token-expiration: 24
+  refresh-token-expiration: 7
+  issuer: com.doooogh.farm 
+
+cloud:
+  nacos:
+    discovery:
+      enabled: true
+    config:
+      server-addr: ${nacos.host}:${nacos.port}
+      namespace: ${nacos.namespace:}
+      group: ${nacos.group:DEFAULT_GROUP}
+
+nacos:
+  server-addr: ${nacos.host}:${nacos.port}
+  namespace: ${nacos.namespace:}
+  group: ${nacos.group:DEFAULT_GROUP} 

@@ -1,0 +1,37 @@
+spring:
+  application:
+    name: auth-service
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:dev}
+  cloud:
+    nacos:
+      server-addr: ${NACOS_SERVER_ADDR:localhost:18848}
+      namespace: ${NACOS_NAMESPACE:dev}
+      group: ${NACOS_GROUP:DEFAULT_GROUP}
+      discovery:
+        enabled: true
+        group: ${spring.cloud.nacos.group}
+        namespace: ${spring.cloud.nacos.namespace}
+      config:
+        enabled: true
+        import-check:
+          enabled: false
+        file-extension: yaml
+        shared-configs:
+          - data-id: common.yaml
+            group: ${spring.cloud.nacos.group}
+            refresh: true
+        extension-configs:
+          - data-id: ${spring.application.name}-${spring.profiles.active}.${spring.cloud.nacos.config.file-extension}
+            group: ${spring.cloud.nacos.group}
+            refresh: true
+        namespace: ${spring.cloud.nacos.namespace}
+        group: ${spring.cloud.nacos.group}
+
+# 日志配置
+logging:
+  level:
+    root: INFO
+    com.doooogh.farm: DEBUG
+    org.springframework.security: DEBUG
+    org.springframework.cloud.gateway: DEBUG 

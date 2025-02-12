@@ -1,0 +1,84 @@
+server:
+  port: ${SERVER_PORT:8081}
+
+spring:
+  datasource:
+    url: ${MYSQL_URL}
+    username: ${MYSQL_USERNAME}
+    password: ${MYSQL_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    type: com.alibaba.druid.pool.DruidDataSource
+    druid:
+      initial-size: 5
+      min-idle: 5
+      max-active: 20
+      max-wait: 60000
+      
+  redis:
+    host: ${REDIS_HOST}
+    port: ${REDIS_PORT:6379}
+    password: ${REDIS_PASSWORD:}
+    database: ${REDIS_DATABASE:0}
+    lettuce:
+      pool:
+        max-active: 8
+        max-idle: 8
+        min-idle: 0
+        max-wait: -1ms
+
+  security:
+    oauth2:
+      client:
+        registration:
+          github:
+            client-id: ${GITHUB_CLIENT_ID:}
+            client-secret: ${GITHUB_CLIENT_SECRET:}
+          custom:
+            client-id: ${CUSTOM_CLIENT_ID:farm-client}
+            client-secret: ${CUSTOM_CLIENT_SECRET:farm-secret}
+            authorization-grant-type: authorization_code
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+            scope: openid,profile,email
+        provider:
+          custom:
+            authorization-uri: ${CUSTOM_AUTH_URI:http://localhost:8081/oauth2/authorize}
+            token-uri: ${CUSTOM_TOKEN_URI:http://localhost:8081/oauth2/token}
+            user-info-uri: ${CUSTOM_USER_INFO_URI:http://localhost:8081/userinfo}
+            jwk-set-uri: ${CUSTOM_JWK_SET_URI:http://localhost:8081/.well-known/jwks.json}
+      ldap:
+        urls: ${LDAP_URL:ldap://localhost:389}
+        base:
+          dn: ${LDAP_BASE_DN:dc=example,dc=com}
+        username: ${LDAP_USERNAME:cn=admin,dc=example,dc=com}
+        password: ${LDAP_PASSWORD:admin}
+        user:
+          dn-pattern: ${LDAP_USER_DN_PATTERN:uid={0},ou=people}
+          search-filter: ${LDAP_USER_SEARCH_FILTER:(uid={0})} 
+
+mybatis-plus:
+  mapper-locations: classpath*:/mapper/**/*.xml
+  type-aliases-package: com.doooogh.farm.auth.entity
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+    db-config:
+      logic-delete-field: deleted
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+      id-type: auto
+
+jwt:
+  secret: ${JWT_SECRET}
+  token-expiration: ${JWT_TOKEN_EXPIRATION:24}
+  refresh-token-expiration: ${JWT_REFRESH_TOKEN_EXPIRATION:7}
+  issuer: ${JWT_ISSUER:com.doooogh.farm}
+
+springdoc:
+  api-docs:
+    enabled: true
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    enabled: true
+  packages-to-scan: com.doooogh.farm.auth.controller 

@@ -1,0 +1,45 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="AuthService-Dev" type="SpringBootApplication">
+    <option name="MAIN_CLASS_NAME" value="com.doooogh.farm.auth.AuthServiceApplication" />
+    <module name="auth-service" />
+    <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+    <option name="VM_PARAMETERS" value="-Dspring.profiles.active=dev" />
+    <envs>
+      <!-- 直接在运行配置中设置环境变量 -->
+      <env name="DB_AUTH_HOST" value="localhost" />
+      <env name="DB_AUTH_PORT" value="3306" />
+      <env name="DB_AUTH_USERNAME" value="farm_auth" />
+      <env name="DB_AUTH_PASSWORD" value="farm_auth_pass" />
+      <env name="REDIS_HOST_DEV" value="localhost" />
+      <env name="REDIS_PORT_DEV" value="6379" />
+      <env name="RABBITMQ_HOST_DEV" value="localhost" />
+      <env name="RABBITMQ_PORT_DEV" value="5672" />
+      <env name="RABBITMQ_USERNAME_DEV" value="guest" />
+      <env name="RABBITMQ_PASSWORD_DEV" value="guest" />
+      <env name="NACOS_HOST_DEV" value="localhost" />
+      <env name="NACOS_PORT_DEV" value="8848" />
+      <env name="NACOS_USERNAME_DEV" value="nacos" />
+      <env name="NACOS_PASSWORD_DEV" value="nacos" />
+    </envs>
+    <extension name="coverage">
+      <pattern>
+        <option name="PATTERN" value="com.doooogh.farm.auth.*" />
+        <option name="ENABLED" value="true" />
+      </pattern>
+    </extension>
+    <extension name="net.ashald.envfile">
+      <option name="IS_ENABLED" value="true" />
+      <option name="IS_SUBST" value="false" />
+      <option name="IS_PATH_MACRO_SUPPORTED" value="false" />
+      <option name="IS_IGNORE_MISSING_FILES" value="false" />
+      <option name="IS_ENABLE_EXPERIMENTAL_INTEGRATIONS" value="false" />
+      <ENTRIES>
+        <ENTRY IS_ENABLED="true" PARSER="runconfig" />
+        <ENTRY IS_ENABLED="true" PARSER="env" PATH="$MODULE_DIR$/../.env" />
+      </ENTRIES>
+    </extension>
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component> 

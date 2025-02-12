@@ -1,0 +1,5 @@
+spring:
+  redis:
+    host: localhost
+    port: 6379
+    password: yourpassword  # 如果没有密码，可以省略 

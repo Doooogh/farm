@@ -1,0 +1,23 @@
+server:
+  port: ${auth-service.port}
+
+spring:
+  datasource:
+    url: jdbc:mysql://${db.auth.host}:${db.auth.port}/${db.auth}?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&serverTimezone=GMT%2B8&allowPublicKeyRetrieval=true
+    username: ${db.auth.username}
+    password: ${db.auth.password}
+    druid:
+      # 只保留需要覆盖的配置
+      initial-size: 5
+      min-idle: 10
+      max-active: 20
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: http://auth-service/oauth2/jwks
+
+jwt:
+  secret: your-secret-key
+  access-token-validity: 3600
+  refresh-token-validity: 86400 
