@@ -1,5 +1,6 @@
 package com.doooogh.farm.common.util;
 
+import com.doooogh.farm.common.auth.CustomUserDetails;
 import com.doooogh.farm.common.config.JwtConfig;
 import com.doooogh.farm.common.exception.AuthException;
 import io.jsonwebtoken.Claims;
@@ -38,15 +39,17 @@ public class JwtUtil {
     /**
      * 生成JWT令牌
      *
-     * @param userDetails 用户信息
+     * @param inputUserDetails 用户信息
      * @param isRefreshToken 是否为刷新令牌
      * @return JWT令牌字符串
      */
-    public String generateToken(UserDetails userDetails, boolean isRefreshToken) {
+    public String generateToken(UserDetails inputUserDetails, boolean isRefreshToken) {
+        CustomUserDetails userDetails= (CustomUserDetails) inputUserDetails;
         Map<String, Object> claims = new HashMap<>();
         claims.put("username", userDetails.getUsername());
         claims.put("authorities", userDetails.getAuthorities());
         claims.put("type", isRefreshToken ? "refresh_token" : "access_token");
+        claims.put("authenticationType",userDetails.getUser().getAuthenticationType());
         
         long expiration = isRefreshToken ? 
             jwtConfig.getRefreshTokenExpiration() * 24 * 60 * 60 * 1000 : // 转换为毫秒

@@ -1,14 +1,13 @@
 package com.doooogh.farm.auth.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.doooogh.farm.auth.client.UserServiceClient;
 import com.doooogh.farm.auth.dto.TokenResponse;
-import com.doooogh.farm.auth.entity.User;
-import com.doooogh.farm.auth.mapper.UserMapper;
-import com.doooogh.farm.auth.model.WechatUserInfo;
+import com.doooogh.farm.common.auth.User;
+import com.doooogh.farm.auth.model.AuthWechatUserInfo;
 import com.doooogh.farm.common.util.JwtUtil;
 import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 
 /**
@@ -19,7 +18,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 @RequiredArgsConstructor
 public class SocialAuthenticationService {
     
-    private final UserMapper userMapper;
+    private final UserServiceClient userServiceClient;
     private final JwtUtil jwtUtil;
     private final WechatService wechatService;
     
@@ -32,12 +31,10 @@ public class SocialAuthenticationService {
      */
     public TokenResponse wechatLogin(String code) {
         // 1. 获取微信用户信息
-        WechatUserInfo wechatUser = wechatService.getWechatUserInfo(code);
-        
+        AuthWechatUserInfo wechatUser = wechatService.getWechatUserInfo(code);
         // 2. 查找或创建用户
-        User user = userMapper.selectOne(new QueryWrapper<User>()
-            .eq("wechat_openid", wechatUser.getOpenId()));
-            
+        User user = userServiceClient.findUserByIdentifier(wechatUser.getOpenId()).getData();
+
         if (user == null) {
             user = createUserFromWechat(wechatUser);
         }
@@ -56,13 +53,14 @@ public class SocialAuthenticationService {
      * @param wechatUser 微信用户信息
      * @return 创建的用户对象
      */
-    private User createUserFromWechat(WechatUserInfo wechatUser) {
+    private User createUserFromWechat(AuthWechatUserInfo wechatUser) {
         User user = new User();
         user.setUsername("wx_" + wechatUser.getOpenId());
         user.setNickname(wechatUser.getNickname());
         user.setWechatOpenid(wechatUser.getOpenId());
         user.setStatus(1);
-        userMapper.insert(user);
+        //todo 待补充其他信息
+        userServiceClient.createUserFromWechat(user);
         return user;
     }
 }

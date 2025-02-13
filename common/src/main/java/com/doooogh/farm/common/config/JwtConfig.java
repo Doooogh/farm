@@ -35,5 +35,5 @@ public class JwtConfig {
      * 令牌签发者
      * 用于标识令牌的发行方
      */
-    private String issuer = "com.doooogh.farm";
+    private String issuer = "doooogh.farm";
 } 

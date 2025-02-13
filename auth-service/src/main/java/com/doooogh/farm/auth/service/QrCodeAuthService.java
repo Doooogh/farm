@@ -1,8 +1,7 @@
 package com.doooogh.farm.auth.service;
 
 import com.doooogh.farm.auth.dto.TokenResponse;
-import com.doooogh.farm.auth.entity.User;
-import com.doooogh.farm.auth.mapper.UserMapper;
+import com.doooogh.farm.common.auth.User;
 import com.doooogh.farm.common.exception.AuthException;
 import com.doooogh.farm.common.util.RedisUtil;
 import com.doooogh.farm.common.util.JwtUtil;
@@ -23,7 +22,6 @@ import com.doooogh.farm.common.exception.BusinessException;
 public class QrCodeAuthService {
     
     private final RedisUtil redisUtil;
-    private final UserMapper userMapper;
     private final JwtUtil jwtUtil;
     private final UserDetailsService userDetailsService;
     
@@ -72,7 +70,7 @@ public class QrCodeAuthService {
         }
         
         // 生成访问令牌
-        User user = userMapper.selectById(status);
+        User user = null;
         if (user == null) {
             throw BusinessException.notFound("用户不存在");
         }

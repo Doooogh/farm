@@ -15,10 +15,13 @@ public class User {
     private String username;
     
     private String password;
+
+    //微信ID
+    private String wechatOpenid;
     
     private String email;
     
-    private String mobile;
+    private String phone;
     
     private String nickname;
     

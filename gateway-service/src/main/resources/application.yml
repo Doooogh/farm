@@ -28,11 +28,16 @@ spring:
           predicates:
             - Path=/users/**
           filters:
+#       配置限流
             - name: RequestRateLimiter
               args:
+#                令牌桶算法：每秒 补充 10 个令牌（即每秒最多允许 10 个请求）
                 redis-rate-limiter.replenishRate: 10
+#                令牌桶的最大容量，即瞬间流量高峰时，最多能存 20 个令牌。
                 redis-rate-limiter.burstCapacity: 20
+#                限流的 关键 key，这里使用 IP 作为限流的依据，每个 IP 有自己的限流计数
                 key-resolver: "#{@ipKeyResolver}"
+#                配置熔断
             - name: CircuitBreaker
               args:
                 name: userFallback
@@ -44,8 +49,10 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://auth-service
-          jwk-set-uri: http://auth-service/oauth2/jwks
+#          从这个 URI 验证 JWT 的 iss（Issuer）字段，只有从指定认证服务器（例如 http://auth-server:8080/）签发的令牌被视为有效。
+          issuer-uri: http://auth-service:8080/
+#          资源服务器通过这个 URL 获取认证服务器的 公钥 用来验证 JWT 的签名。
+          jwk-set-uri: http://auth-service:8080/.well-known/jwks.json
           
   redis:
     host: ${REDIS_HOST}

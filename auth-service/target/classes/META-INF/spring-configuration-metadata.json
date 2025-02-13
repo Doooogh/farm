@@ -1,0 +1,119 @@
+{
+  "groups": [
+    {
+      "name": "env",
+      "type": "com.doooogh.farm.auth.config.EnvConfig",
+      "sourceType": "com.doooogh.farm.auth.config.EnvConfig"
+    },
+    {
+      "name": "env.database",
+      "type": "com.doooogh.farm.auth.config.EnvConfig$Database",
+      "sourceType": "com.doooogh.farm.auth.config.EnvConfig",
+      "sourceMethod": "getDatabase()"
+    },
+    {
+      "name": "env.jwt",
+      "type": "com.doooogh.farm.auth.config.EnvConfig$Jwt",
+      "sourceType": "com.doooogh.farm.auth.config.EnvConfig",
+      "sourceMethod": "getJwt()"
+    },
+    {
+      "name": "env.nacos",
+      "type": "com.doooogh.farm.auth.config.EnvConfig$Nacos",
+      "sourceType": "com.doooogh.farm.auth.config.EnvConfig",
+      "sourceMethod": "getNacos()"
+    },
+    {
+      "name": "env.redis",
+      "type": "com.doooogh.farm.auth.config.EnvConfig$Redis",
+      "sourceType": "com.doooogh.farm.auth.config.EnvConfig",
+      "sourceMethod": "getRedis()"
+    }
+  ],
+  "properties": [
+    {
+      "name": "env.database.driver-class-name",
+      "type": "java.lang.String",
+      "sourceType": "com.doooogh.farm.auth.config.EnvConfig$Database",
+      "defaultValue": "com.mysql.cj.jdbc.Driver"
+    },
+    {
+      "name": "env.database.password",
+      "type": "java.lang.String",
+      "sourceType": "com.doooogh.farm.auth.config.EnvConfig$Database"
+    },
+    {
+      "name": "env.database.url",
+      "type": "java.lang.String",
+      "sourceType": "com.doooogh.farm.auth.config.EnvConfig$Database"
+    },
+    {
+      "name": "env.database.username",
+      "type": "java.lang.String",
+      "sourceType": "com.doooogh.farm.auth.config.EnvConfig$Database"
+    },
+    {
+      "name": "env.jwt.issuer",
+      "type": "java.lang.String",
+      "sourceType": "com.doooogh.farm.auth.config.EnvConfig$Jwt"
+    },
+    {
+      "name": "env.jwt.refresh-token-expiration",
+      "type": "java.lang.Long",
+      "sourceType": "com.doooogh.farm.auth.config.EnvConfig$Jwt"
+    },
+    {
+      "name": "env.jwt.secret",
+      "type": "java.lang.String",
+      "sourceType": "com.doooogh.farm.auth.config.EnvConfig$Jwt"
+    },
+    {
+      "name": "env.jwt.token-expiration",
+      "type": "java.lang.Long",
+      "sourceType": "com.doooogh.farm.auth.config.EnvConfig$Jwt"
+    },
+    {
+      "name": "env.nacos.group",
+      "type": "java.lang.String",
+      "sourceType": "com.doooogh.farm.auth.config.EnvConfig$Nacos"
+    },
+    {
+      "name": "env.nacos.namespace",
+      "type": "java.lang.String",
+      "sourceType": "com.doooogh.farm.auth.config.EnvConfig$Nacos"
+    },
+    {
+      "name": "env.nacos.server-addr",
+      "type": "java.lang.String",
+      "sourceType": "com.doooogh.farm.auth.config.EnvConfig$Nacos"
+    },
+    {
+      "name": "env.redis.database",
+      "type": "java.lang.Integer",
+      "sourceType": "com.doooogh.farm.auth.config.EnvConfig$Redis",
+      "defaultValue": 0
+    },
+    {
+      "name": "env.redis.host",
+      "type": "java.lang.String",
+      "sourceType": "com.doooogh.farm.auth.config.EnvConfig$Redis"
+    },
+    {
+      "name": "env.redis.password",
+      "type": "java.lang.String",
+      "sourceType": "com.doooogh.farm.auth.config.EnvConfig$Redis"
+    },
+    {
+      "name": "env.redis.port",
+      "type": "java.lang.Integer",
+      "sourceType": "com.doooogh.farm.auth.config.EnvConfig$Redis",
+      "defaultValue": 0
+    },
+    {
+      "name": "env.server-port",
+      "type": "java.lang.String",
+      "sourceType": "com.doooogh.farm.auth.config.EnvConfig"
+    }
+  ],
+  "hints": []
+}

@@ -45,9 +45,5 @@ public class BaseUser extends BaseEntity {
      */
     private Integer status;
     
-    /**
-     * 用户角色列表
-     */
-    @TableField(exist = false)
-    private List<String> roles;
+
 } 
