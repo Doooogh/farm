@@ -25,7 +25,7 @@ public class SmsAuthenticationStrategy implements AuthenticationStrategy {
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-        String phoneNumber = authentication.getName();
+        String phoneNumber = (String) authentication.getPrincipal();
         String smsCode = (String) authentication.getCredentials();
 
         log.info("Attempting SMS authentication for phone number {}", phoneNumber);
@@ -49,8 +49,8 @@ public class SmsAuthenticationStrategy implements AuthenticationStrategy {
     }
 
     @Override
-    public boolean supports(String method) {
-        return "SMS".equalsIgnoreCase(method);
+    public boolean supports(AuthenticationEnum method) {
+        return AuthenticationEnum.SMS == method;
     }
 
 } 

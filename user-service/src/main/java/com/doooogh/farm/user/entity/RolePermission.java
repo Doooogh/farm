@@ -6,7 +6,7 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 @Data
-@TableName("role_permission")
+@TableName("sys_role_permission")
 public class RolePermission {
 
     @TableId(type = IdType.AUTO)

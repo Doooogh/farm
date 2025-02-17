@@ -6,7 +6,7 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 @Data
-@TableName("permission")
+@TableName("sys_permission")
 public class Permission {
     @TableId(type = IdType.AUTO)
     private Long id;

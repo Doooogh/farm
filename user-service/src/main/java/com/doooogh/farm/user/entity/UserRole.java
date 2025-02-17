@@ -6,7 +6,7 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 @Data
-@TableName("user_role")
+@TableName("sys_user_role")
 public class UserRole {
     
     @TableId(type = IdType.AUTO)
@@ -15,10 +15,7 @@ public class UserRole {
     private Long userId;
     
     private String roleCode;
-    
-    @TableLogic
-    private Integer deleted;
-    
+
     @TableField(fill = FieldFill.INSERT)
     private LocalDateTime createTime;
     

@@ -1,6 +1,5 @@
 package com.doooogh.farm.auth.service;
 
-import com.doooogh.farm.auth.client.UserServiceClient;
 import com.doooogh.farm.auth.dto.TokenResponse;
 import com.doooogh.farm.common.auth.User;
 import com.doooogh.farm.common.exception.AuthException;
