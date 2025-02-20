@@ -1,6 +1,7 @@
 package com.doooogh.farm.auth.config;
 
 import com.doooogh.farm.auth.security.CustomAuthenticationProvider;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -22,13 +23,14 @@ import javax.servlet.http.HttpServletResponse;
  */
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final CustomAuthenticationProvider customAuthenticationProvider;
 
-    public SecurityConfig(CustomAuthenticationProvider customAuthenticationProvider) {
-        this.customAuthenticationProvider = customAuthenticationProvider;
-    }
+
+
+
 
     /**
      * 配置认证管理器。
@@ -53,10 +55,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .cors().and() // 启用CORS
             .csrf().disable()
             .authorizeRequests()
-                .antMatchers("/auth/login", "/auth/refresh").permitAll()
+                .antMatchers("/auth/login", "/auth/refresh","/oauth/token").permitAll()
                 .anyRequest().authenticated()
             .and()
-            .formLogin()
+//                .addFilterAt(customAuthenticationFilter, UsernamePasswordAuthenticationFilter.class) // 插入自定义过滤器
+                .formLogin()
                 .loginPage("/login") // 自定义登录页面
                 .permitAll()
             .and()

@@ -34,7 +34,8 @@
     {
       "name": "env.database.driver-class-name",
       "type": "java.lang.String",
-      "sourceType": "com.doooogh.farm.auth.config.EnvConfig$Database"
+      "sourceType": "com.doooogh.farm.auth.config.EnvConfig$Database",
+      "defaultValue": "com.mysql.cj.jdbc.Driver"
     },
     {
       "name": "env.database.password",
@@ -89,7 +90,8 @@
     {
       "name": "env.redis.database",
       "type": "java.lang.Integer",
-      "sourceType": "com.doooogh.farm.auth.config.EnvConfig$Redis"
+      "sourceType": "com.doooogh.farm.auth.config.EnvConfig$Redis",
+      "defaultValue": 0
     },
     {
       "name": "env.redis.host",
@@ -104,7 +106,8 @@
     {
       "name": "env.redis.port",
       "type": "java.lang.Integer",
-      "sourceType": "com.doooogh.farm.auth.config.EnvConfig$Redis"
+      "sourceType": "com.doooogh.farm.auth.config.EnvConfig$Redis",
+      "defaultValue": 0
     },
     {
       "name": "env.server-port",

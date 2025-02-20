@@ -6,16 +6,17 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://localhost:8081
+          issuer-uri: http://auth-service:8080
+          jwk-set-uri: http://auth-service:8080/.well-known/jwks.json
   rabbitmq:
     host: localhost
     port: 5672
     username: guest
     password: guest
   datasource:
-    url: ${MYSQL_URL}
-    username: ${MYSQL_USERNAME}
-    password: ${MYSQL_PASSWORD}
+    url: ${USER_SERVICE_MYSQL_URL}
+    username: ${USER_SERVICE_MYSQL_USERNAME}
+    password: ${USER_SERVICE_MYSQL_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
     type: com.alibaba.druid.pool.DruidDataSource
     druid:
@@ -25,10 +26,10 @@ spring:
       max-wait: 60000
 
   redis:
-    host: ${REDIS_HOST}
-    port: ${REDIS_PORT:16379}
-    password: ${REDIS_PASSWORD:}
-    database: ${REDIS_DATABASE:0}
+    host: ${USER_SERVICE_REDIS_HOST}
+    port: ${USER_SERVICE_REDIS_PORT:16379}
+    password: ${USER_SERVICE_REDIS_PASSWORD:}
+    database: ${USER_SERVICE_REDIS_DATABASE:0}
     lettuce:
       pool:
         max-active: 8
@@ -36,3 +37,12 @@ spring:
         min-idle: 0
         max-wait: -1ms
 
+# 日志配置
+logging:
+  level:
+    root: INFO
+    com.doooogh.farm: INFO
+    org.springframework: INFO
+    org.hibernate: INFO
+    org.springframework.web: INFO
+    org.springframework.security: INFO

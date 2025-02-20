@@ -35,12 +35,11 @@ spring:
 #        username: nacos
 #        password: nacos
 
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 5000
+        readTimeout: 5000
 
 
-# 日志配置
-logging:
-  level:
-    root: INFO
-    com.doooogh.farm: DEBUG
-    org.springframework.security: DEBUG
-    org.springframework.cloud.gateway: DEBUG 

@@ -1,9 +1,8 @@
 package com.doooogh.farm.auth.strategy;
 
 import com.alibaba.fastjson2.JSONObject;
-import com.doooogh.farm.auth.enums.AuthenticationEnum;
+import com.doooogh.farm.common.enums.AuthenticationEnum;
 import com.doooogh.farm.auth.service.CaptchaService;
-import com.doooogh.farm.common.util.StringUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

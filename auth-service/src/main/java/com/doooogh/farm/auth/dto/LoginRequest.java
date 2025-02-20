@@ -19,4 +19,20 @@ public class LoginRequest {
      * 用户的登录密码
      */
     private String password;
+
+
+    /**
+     * 手机号
+     */
+    private String phone;
+
+    /**
+     * 短信码
+     */
+    private String smsCode;
+
+    /**
+     * 验证码
+     */
+    private String captcha;
 } 

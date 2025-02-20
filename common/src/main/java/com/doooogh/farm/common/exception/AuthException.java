@@ -11,6 +11,12 @@ public class AuthException extends RuntimeException {
         this.code = code;
     }
 
+
+    public static AuthException authException(String message) {
+        return new AuthException(500,message);
+    }
+
+
     public static AuthException invalidCredentials() {
         return new AuthException(401001, "用户名或密码错误");
     }

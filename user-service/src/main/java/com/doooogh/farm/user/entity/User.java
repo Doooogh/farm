@@ -1,9 +1,12 @@
 package com.doooogh.farm.user.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.Date;
+import java.util.List;
 
 @Data
 @TableName("sys_user")
@@ -42,11 +45,16 @@ public class User {
      * 用户状态：0-禁用，1-启用
      */
     private Integer status;
+
+    @TableField(exist = false)
+    private List<String> roles;
     
 
     @TableField(fill = FieldFill.INSERT)
-    private LocalDateTime createTime;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    private Date createTime;
     
     @TableField(fill = FieldFill.INSERT_UPDATE)
-    private LocalDateTime updateTime;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    private Date updateTime;
 } 

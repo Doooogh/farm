@@ -6,6 +6,7 @@ import com.doooogh.farm.common.entity.BaseUser;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -30,7 +31,7 @@ public class User extends BaseUser {
      * 用户角色列表
      */
     @TableField(exist = false)
-    private List<UserRole> roles;
+    private List<String> roles=new ArrayList<>();
 
     //认证方式
     private String authenticationType;

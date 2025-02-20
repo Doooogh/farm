@@ -30,3 +30,4 @@ replay_pid*
 # IDE文件
 .idea/
 *.iml
+.history/

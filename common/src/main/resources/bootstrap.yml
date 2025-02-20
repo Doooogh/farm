@@ -18,3 +18,15 @@ mybatis-plus:
       logic-delete-field: deleted
       logic-delete-value: 1
       logic-not-delete-value: 0
+
+
+# 日志配置
+logging:
+  level:
+    root: INFO
+    com.doooogh.farm: INFO
+    org.springframework: INFO
+    org.hibernate: INFO
+    org.springframework.web: INFO
+    org.springframework.security: INFO
+

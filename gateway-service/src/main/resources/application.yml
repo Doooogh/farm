@@ -12,8 +12,10 @@ spring:
         - id: auth-service
           uri: lb://auth-service
           predicates:
-            - Path=/auth/**
+            - Path=/farm/auth/**
           filters:
+#            去掉请求路径的前两个层级
+            - StripPrefix=2
             - name: RequestRateLimiter
               args:
                 redis-rate-limiter.replenishRate: 10
@@ -26,9 +28,11 @@ spring:
         - id: user-service
           uri: lb://user-service
           predicates:
-            - Path=/users/**
+            - Path=/farm/users/**
           filters:
-#       配置限流
+            #            去掉请求路径的前两个层级
+            - StripPrefix=2
+            #       配置限流
             - name: RequestRateLimiter
               args:
 #                令牌桶算法：每秒 补充 10 个令牌（即每秒最多允许 10 个请求）

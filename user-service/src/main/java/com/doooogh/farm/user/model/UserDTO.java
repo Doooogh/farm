@@ -7,14 +7,29 @@ import java.util.List;
 
 @Data
 public class UserDTO {
-    private Long id;
+
     private String username;
-    private String nickname;
+
+    private String password;
+
+    //微信ID
+    private String wechatOpenid;
+
     private String email;
+
     private String phone;
-    private String avatar;
+
+    //昵称
+    private String nickname;
+
+    //真实名称
+    private String realName;
+
+
+    /**
+     * 用户状态：0-禁用，1-启用
+     */
     private Integer status;
+
     private List<String> roles;
-    private LocalDateTime createTime;
-    private LocalDateTime updateTime;
 } 

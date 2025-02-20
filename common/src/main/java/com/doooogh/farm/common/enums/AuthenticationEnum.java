@@ -1,7 +1,8 @@
-package com.doooogh.farm.auth.enums;
+package com.doooogh.farm.common.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.springframework.security.authentication.AuthenticationServiceException;
 
 import java.util.Arrays;
 
@@ -13,7 +14,7 @@ import java.util.Arrays;
 @Getter
 @AllArgsConstructor
 public enum AuthenticationEnum {
-    
+
     //账号密码
     USERNAME_PASSWORD,
     //短信
@@ -28,7 +29,7 @@ public enum AuthenticationEnum {
      * @date 2025/2/17
      */
     public static AuthenticationEnum getAuthenticationType(String authMethod) {
-        return Arrays.stream(AuthenticationEnum.values()).filter(item -> item.name().equals(authMethod)).findFirst().orElse(null);
+        return Arrays.stream(AuthenticationEnum.values()).filter(item -> item.name().equals(authMethod)).findFirst().orElseThrow(() -> new AuthenticationServiceException("Unsupported authentication method: " + authMethod));
     }
 
 }

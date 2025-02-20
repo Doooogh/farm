@@ -1,6 +1,6 @@
 package com.doooogh.farm.auth.strategy;
 
-import com.doooogh.farm.auth.enums.AuthenticationEnum;
+import com.doooogh.farm.common.enums.AuthenticationEnum;
 import com.doooogh.farm.auth.service.SmsService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -36,9 +36,8 @@ public class SmsAuthenticationStrategy implements AuthenticationStrategy {
             throw new BadCredentialsException("Invalid SMS code");
         }
 
-        String identifier = AuthenticationEnum.SMS + "_" + phoneNumber;
         // 加载用户详细信息
-        UserDetails userDetails = userDetailsService.loadUserByUsername(identifier);
+        UserDetails userDetails = userDetailsService.loadUserByUsername(phoneNumber);
         if (userDetails == null) {
             log.warn("No user found for phone number {}", phoneNumber);
             throw new BadCredentialsException("User not found");

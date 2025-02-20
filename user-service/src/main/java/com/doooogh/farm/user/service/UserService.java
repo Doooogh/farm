@@ -95,6 +95,15 @@ public class UserService extends ServiceImpl<UserMapper,User> {
                 .eq(User::getPhone, identifier)
                 .eq(User::getStatus, 1)
         );
+        // 查询用户角色
+        List<UserRole> userRoles = userRoleService.list(
+                new LambdaQueryWrapper<UserRole>().eq(UserRole::getUserId, one.getId())
+        );
+
+        one.setRoles(userRoles.stream()
+                .map(UserRole::getRoleCode)
+                .collect(Collectors.toList()));
+
         return one;
     }
 } 

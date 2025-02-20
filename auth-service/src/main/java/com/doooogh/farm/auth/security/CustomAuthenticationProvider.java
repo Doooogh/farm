@@ -1,7 +1,7 @@
 package com.doooogh.farm.auth.security;
 
 import com.alibaba.fastjson2.JSONObject;
-import com.doooogh.farm.auth.enums.AuthenticationEnum;
+import com.doooogh.farm.common.enums.AuthenticationEnum;
 import com.doooogh.farm.auth.strategy.CusAuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.core.Authentication;

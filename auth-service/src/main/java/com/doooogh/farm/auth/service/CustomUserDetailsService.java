@@ -2,9 +2,8 @@ package com.doooogh.farm.auth.service;
 
 import com.doooogh.farm.auth.client.UserServiceClient;
 import com.doooogh.farm.common.auth.User;
-import com.doooogh.farm.auth.exception.AuthException;
 import com.doooogh.farm.common.auth.CustomUserDetails;
-import com.doooogh.farm.common.util.StringUtil;
+import com.doooogh.farm.common.exception.AuthException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -32,16 +31,11 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String identifier) throws UsernameNotFoundException {
         //标识
-        String newIdentifier = StringUtil.getSecondString(identifier, "_");
-        //验证方式
-        String authenticationType = StringUtil.getFirstString(identifier, "_");
         // 使用 Feign 客户端调用用户服务
-        User user = userServiceClient.findUserByIdentifier(newIdentifier).getData();
+        User user = userServiceClient.findUserByIdentifier(identifier).getData();
         if (user == null) {
-            throw new AuthException(401, "用户不存在");
+            throw  AuthException.userNotFound();
         }
-        user.setAuthenticationType(authenticationType);
-
         // 构建UserDetails对象
         return new CustomUserDetails(user);
     }

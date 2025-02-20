@@ -32,8 +32,8 @@ spring:
         namespace: ${spring.cloud.nacos.namespace}
         service: ${spring.application.name}
         server-addr: ${nacos.server-addr}
-        username: nacos
-        password: nacos
+#        username: nacos
+#        password: nacos
 
       config:
         file-extension: yaml
@@ -48,5 +48,5 @@ spring:
         namespace: ${spring.cloud.nacos.namespace}
         group: ${spring.cloud.nacos.group}
         server-addr: ${nacos.server-addr}
-        username: nacos
-        password: nacos
+#        username: nacos
+#        password: nacos

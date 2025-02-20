@@ -24,20 +24,25 @@ public class FeignErrorDecoder implements ErrorDecoder {
     @Override
     public Exception decode(String methodKey, Response response) {
         try {
+            // 记录详细的错误信息
+            log.error("Feign call failed - Method: {}, Status: {}, Headers: {}", 
+                methodKey, response.status(), response.headers());
+            
+            if (response.status() == 401) {
+                return new AuthException(401, "服务调用未授权，请检查认证信息");
+            }
+            
+            if (response.status() >= 500) {
+                return new ServiceException("服务暂时不可用");
+            }
+            
             // 读取错误响应
             String responseBody = IOUtils.toString(response.body().asInputStream(), StandardCharsets.UTF_8.name());
-            Result<?> result = JsonUtils.parseObject(responseBody, Result.class);
+            log.error("Error response body: {}", responseBody);
             
-            // 根据错误码返回对应的异常
+            Result<?> result = JsonUtils.parseObject(responseBody, Result.class);
             if (result != null) {
-                switch (result.getCode()) {
-                    case 401001:
-                        return new AuthException(result.getCode(), result.getMessage());
-                    case 403001:
-                        return new AccessDeniedException(result.getMessage());
-                    default:
-                        return new ServiceException(result.getCode(), result.getMessage());
-                }
+                return new ServiceException(result.getCode(), result.getMessage());
             }
         } catch (Exception e) {
             log.error("Feign error decode failed", e);

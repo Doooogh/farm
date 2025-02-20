@@ -5,6 +5,7 @@ import org.apache.ibatis.reflection.MetaObject;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 
 /**
  * MyBatis-Plus自动填充处理器
@@ -18,10 +19,10 @@ public class MyMetaObjectHandler implements MetaObjectHandler {
      */
     @Override
     public void insertFill(MetaObject metaObject) {
-        LocalDateTime now = LocalDateTime.now();
+        Date now = new Date();
         // 设置创建和更新时间
-        this.strictInsertFill(metaObject, "createTime", LocalDateTime.class, now);
-        this.strictInsertFill(metaObject, "updateTime", LocalDateTime.class, now);
+        this.strictInsertFill(metaObject, "createTime", Date.class, now);
+        this.strictInsertFill(metaObject, "updateTime", Date.class, now);
         // 设置逻辑删除标志
         this.strictInsertFill(metaObject, "deleted", Boolean.class, false);
         // TODO: 从SecurityContext获取当前用户ID
@@ -35,7 +36,7 @@ public class MyMetaObjectHandler implements MetaObjectHandler {
     @Override
     public void updateFill(MetaObject metaObject) {
         // 更新修改时间
-        this.strictUpdateFill(metaObject, "updateTime", LocalDateTime.class, LocalDateTime.now());
+        this.strictUpdateFill(metaObject, "updateTime", Date.class, new Date());
         // TODO: 从SecurityContext获取当前用户ID
         this.strictUpdateFill(metaObject, "updateBy", Long.class, 0L);
     }

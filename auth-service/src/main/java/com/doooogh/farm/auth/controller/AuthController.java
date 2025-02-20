@@ -5,8 +5,11 @@ import com.doooogh.farm.auth.dto.TokenResponse;
 import com.doooogh.farm.auth.service.AuthService;
 import com.doooogh.farm.common.result.Result;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * 认证控制器
@@ -15,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
+@Slf4j
 public class AuthController {
 
     private final AuthService authService;
@@ -27,15 +31,9 @@ public class AuthController {
      * @return 包含访问令牌和刷新令牌的响应
      */
     @PostMapping("/login")
-    public Result<TokenResponse> login(@RequestBody LoginRequest request) {
-        try {
-            TokenResponse response = authService.login(request);
+    public Result<TokenResponse> login(HttpServletRequest request, @RequestBody LoginRequest loginRequest) {
+            TokenResponse response = authService.login(request,loginRequest);
             return Result.ok(response);
-        } catch (BadCredentialsException e) {
-            return Result.fail(401, "用户名或密码错误");
-        } catch (Exception e) {
-            return Result.fail("登录失败");
-        }
     }
 
     /**
