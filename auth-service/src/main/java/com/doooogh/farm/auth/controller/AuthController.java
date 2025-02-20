@@ -45,12 +45,8 @@ public class AuthController {
      */
     @PostMapping("/refresh")
     public Result<TokenResponse> refresh(@RequestHeader("Authorization") String refreshToken) {
-        try {
             TokenResponse tokenResponse = authService.refresh(refreshToken);
             return Result.ok(tokenResponse);
-        } catch (Exception e) {
-            return Result.fail("刷新令牌失败");
-        }
     }
 
     /**

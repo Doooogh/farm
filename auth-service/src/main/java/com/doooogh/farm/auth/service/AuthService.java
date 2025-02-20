@@ -147,9 +147,11 @@ public class AuthService {
      */
     public TokenResponse refresh(String refreshToken) {
         try {
+
+
             // 1. 验证刷新令牌
             if (!jwtUtil.validateToken(refreshToken)) {
-                throw new AuthException(401, "无效的刷新令牌");
+                throw AuthException.invalidToken();
             }
 
             // 2. 从令牌中获取用户名
@@ -158,7 +160,7 @@ public class AuthService {
             // 3. 检查Redis中的刷新令牌
             String storedToken = (String) redisUtil.get("refresh_token:" + username);
             if (storedToken == null || !storedToken.equals(refreshToken)) {
-                throw new AuthException(401, "刷新令牌已失效");
+                throw AuthException.tokenExpired();
             }
 
             // 4. 生成新的令牌
@@ -178,11 +180,10 @@ public class AuthService {
                     .expiresIn(jwtUtil.getAccessTokenExpiration() * 3600)
                     .tokenType("Bearer")
                     .build();
-
-        } catch (JwtException e) {
-            throw new AuthException(401, "刷新令牌解析失败");
+        } catch (AuthException e) {
+            throw e;
         } catch (Exception e) {
-            throw new ServiceException("刷新令牌服务异常");
+            throw new AuthException(500, "刷新令牌服务异常");
         }
     }
 
@@ -193,16 +194,16 @@ public class AuthService {
      * @param accessToken 访问令牌
      */
     public void logout(String accessToken) {
-        try {
-            String username = jwtUtil.getUsernameFromToken(accessToken);
-            // 从Redis中删除刷新令牌
-            redisUtil.delete("refresh_token:" + username);
-            // 将访问令牌加入黑名单
-            redisUtil.set("token_blacklist:" + accessToken, "",
-                    jwtUtil.getAccessTokenExpiration(),
-                    TimeUnit.HOURS);
-        } catch (JwtException e) {
-            log.warn("Invalid token during logout", e);
+        String username = jwtUtil.getUsernameFromToken(accessToken);
+        if(null==username){
+            throw AuthException.userNotLogin();
         }
+        // 从Redis中删除刷新令牌
+        redisUtil.delete("refresh_token:" + username);
+        // 将访问令牌加入黑名单
+        redisUtil.set("token_blacklist:" + accessToken, "",
+                jwtUtil.getAccessTokenExpiration(),
+                TimeUnit.HOURS);
+
     }
 } 

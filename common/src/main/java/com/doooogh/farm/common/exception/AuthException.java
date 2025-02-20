@@ -25,6 +25,10 @@ public class AuthException extends RuntimeException {
         return new AuthException(401002, "用户不存在");
     }
 
+    public static AuthException userNotLogin() {
+        return new AuthException(401002, "用户未登录");
+    }
+
     public static AuthException accountLocked() {
         return new AuthException(401003, "账户已被锁定");
     }

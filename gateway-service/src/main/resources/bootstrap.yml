@@ -40,3 +40,9 @@ spring:
         jwt:
           issuer-uri: http://auth-server:8080/
           jwk-set-uri: http://auth-server:8080/.well-known/jwks.json
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: gateway

@@ -55,7 +55,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .cors().and() // 启用CORS
             .csrf().disable()
             .authorizeRequests()
-                .antMatchers("/auth/login", "/auth/refresh","/oauth/token").permitAll()
+                .antMatchers("/auth/**", "/auth/refresh","/oauth/token").permitAll()
                 .anyRequest().authenticated()
             .and()
 //                .addFilterAt(customAuthenticationFilter, UsernamePasswordAuthenticationFilter.class) // 插入自定义过滤器

@@ -3,10 +3,7 @@ package com.doooogh.farm.common.util;
 import com.doooogh.farm.common.auth.CustomUserDetails;
 import com.doooogh.farm.common.config.JwtConfig;
 import com.doooogh.farm.common.exception.AuthException;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -105,12 +102,16 @@ public class JwtUtil {
      * 从令牌中获取用户名
      */
     public String getUsernameFromToken(String token) {
-        Claims claims = Jwts.parserBuilder()
-            .setSigningKey(getSigningKey())
-            .build()
-            .parseClaimsJws(token)
-            .getBody();
-        return claims.getSubject();
+        try {
+            Claims claims = Jwts.parserBuilder()
+                    .setSigningKey(getSigningKey())
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+            return claims.getSubject();
+        }catch (MalformedJwtException e){
+            throw new AuthException(500,"Token格式错误");
+        }
     }
 
     /**

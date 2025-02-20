@@ -1,6 +1,7 @@
 server:
   port: 8080
-
+  servlet:
+    context-path: /farm
 spring:
   cloud:
     gateway:
@@ -16,6 +17,7 @@ spring:
           filters:
 #            去掉请求路径的前两个层级
             - StripPrefix=2
+            - AddRequestHeader=Authorization, $request.headers.Authorization
             - name: RequestRateLimiter
               args:
                 redis-rate-limiter.replenishRate: 10
@@ -32,6 +34,7 @@ spring:
           filters:
             #            去掉请求路径的前两个层级
             - StripPrefix=2
+            - AddRequestHeader=Authorization, $request.headers.Authorization
             #       配置限流
             - name: RequestRateLimiter
               args:
