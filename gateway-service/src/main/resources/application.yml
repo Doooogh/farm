@@ -57,7 +57,7 @@ spring:
       resourceserver:
         jwt:
 #          从这个 URI 验证 JWT 的 iss（Issuer）字段，只有从指定认证服务器（例如 http://auth-server:8080/）签发的令牌被视为有效。
-          issuer-uri: http://auth-service:8080/
+          issuer-uri: http://${JWT_ISSUER:com.doooogh.farm}:8080/
 #          资源服务器通过这个 URL 获取认证服务器的 公钥 用来验证 JWT 的签名。
           jwk-set-uri: http://auth-service:8080/.well-known/jwks.json
           

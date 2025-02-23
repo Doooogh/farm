@@ -1,3 +1,5 @@
+com/doooogh/farm/gateway/controller/FallbackController.class
+com/doooogh/farm/gateway/config/IpKeyResolverConfig.class
 com/doooogh/farm/gateway/GatewayServiceApplication.class
 com/doooogh/farm/gateway/config/SecurityConfig.class
 com/doooogh/farm/gateway/filter/GlobalAuthFilter.class

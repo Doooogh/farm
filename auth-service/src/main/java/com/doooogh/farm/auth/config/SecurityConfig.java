@@ -1,5 +1,6 @@
 package com.doooogh.farm.auth.config;
 
+import com.doooogh.farm.auth.filter.CustomAuthenticationFilter;
 import com.doooogh.farm.auth.security.CustomAuthenticationProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -12,6 +13,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -27,7 +29,6 @@ import javax.servlet.http.HttpServletResponse;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final CustomAuthenticationProvider customAuthenticationProvider;
-
 
 
 
@@ -52,31 +53,38 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-            .cors().and() // 启用CORS
-            .csrf().disable()
-            .authorizeRequests()
-                .antMatchers("/auth/**", "/auth/refresh","/oauth/token").permitAll()
+                //启用 CORS（跨源资源共享）,允许来自不同源的请求
+                .cors().and()
+                //禁用 CSRF 保护。
+                .csrf().disable()
+                .authorizeRequests()
+                .antMatchers("/oauth/token", "/oauth/token_check","/api/**").permitAll()
                 .anyRequest().authenticated()
-            .and()
-//                .addFilterAt(customAuthenticationFilter, UsernamePasswordAuthenticationFilter.class) // 插入自定义过滤器
+                .and()
+                //配置自定义登录页面,允许所有用户访问
                 .formLogin()
-                .loginPage("/login") // 自定义登录页面
+                .loginPage("/login")
                 .permitAll()
-            .and()
-            .logout()
+                .and()
+                //登出配置
+                .logout()
                 .logoutUrl("/logout")
                 .logoutSuccessUrl("/login?logout")
                 .permitAll()
-            .and()
-            .exceptionHandling()
+                .and()
+                //插入自定义的认证过滤器
+                .addFilterBefore(new CustomAuthenticationFilter(authenticationManagerBean()), UsernamePasswordAuthenticationFilter.class)
+                //异常处理
+                .exceptionHandling()
                 .authenticationEntryPoint((request, response, authException) -> {
                     response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
                 })
                 .accessDeniedHandler((request, response, accessDeniedException) -> {
                     response.sendError(HttpServletResponse.SC_FORBIDDEN, "Forbidden");
                 })
-            .and()
-            .sessionManagement()
+                .and()
+                //设置会话管理策略为无状态
+                .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
     }
 

@@ -12,7 +12,6 @@ com/doooogh/farm/user/controller/PermissionController.class
 com/doooogh/farm/user/mapper/UserRoleMapper.class
 com/doooogh/farm/user/controller/UserController.class
 com/doooogh/farm/user/model/WechatUserInfo.class
-com/doooogh/farm/user/config/SecurityConfig.class
 com/doooogh/farm/user/mapper/RolePermissionMapper.class
 com/doooogh/farm/user/model/TokenInfo.class
 com/doooogh/farm/user/service/RoleService.class

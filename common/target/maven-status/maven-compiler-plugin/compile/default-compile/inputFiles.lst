@@ -13,6 +13,7 @@
 /Users/li/Documents/idea_workspace/farm/common/src/main/java/com/doooogh/farm/common/util/RedisUtil.java
 /Users/li/Documents/idea_workspace/farm/common/src/main/java/com/doooogh/farm/common/config/JacksonConfig.java
 /Users/li/Documents/idea_workspace/farm/common/src/main/java/com/doooogh/farm/common/entity/BaseEntity.java
+/Users/li/Documents/idea_workspace/farm/common/src/main/java/com/doooogh/farm/common/enums/AuthenticationEnum.java
 /Users/li/Documents/idea_workspace/farm/common/src/main/java/com/doooogh/farm/common/util/JsonUtils.java
 /Users/li/Documents/idea_workspace/farm/common/src/main/java/com/doooogh/farm/common/auth/UserRole.java
 /Users/li/Documents/idea_workspace/farm/common/src/main/java/com/doooogh/farm/common/exception/ServiceException.java

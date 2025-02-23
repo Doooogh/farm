@@ -1,5 +1,6 @@
 package com.doooogh.farm.auth.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 /**
@@ -7,6 +8,7 @@ import lombok.Data;
  * 封装用户登录时提交的认证信息
  */
 @Data
+@AllArgsConstructor
 public class LoginRequest {
     /**
      * 用户名
@@ -35,4 +37,10 @@ public class LoginRequest {
      * 验证码
      */
     private String captcha;
+
+
+    /**
+     * 验证方式
+     */
+    private String authMethod;
 } 

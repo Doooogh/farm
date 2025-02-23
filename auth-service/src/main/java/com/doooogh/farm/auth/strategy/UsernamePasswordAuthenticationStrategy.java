@@ -1,6 +1,7 @@
 package com.doooogh.farm.auth.strategy;
 
 import com.alibaba.fastjson2.JSONObject;
+import com.doooogh.farm.auth.entity.CustomAuthenticationToken;
 import com.doooogh.farm.common.enums.AuthenticationEnum;
 import com.doooogh.farm.auth.service.CaptchaService;
 import lombok.extern.slf4j.Slf4j;
@@ -36,10 +37,12 @@ public class UsernamePasswordAuthenticationStrategy implements AuthenticationStr
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-        String username = (String) authentication.getPrincipal();
-        String password = (String) authentication.getCredentials();
+        CustomAuthenticationToken customAuthenticationToken= (CustomAuthenticationToken) authentication;
+        String username = (String) customAuthenticationToken.getPrincipal();
+        String password = (String) customAuthenticationToken.getCredentials();
 
-        String captcha = ((JSONObject) authentication.getDetails()).getString("captcha"); // 假设验证码通过details传递
+        //验证码
+        String captcha = customAuthenticationToken.getCaptcha();
 
         log.info("Attempting authentication for user {}", username);
         UserDetails userDetails = userDetailsService.loadUserByUsername(username);

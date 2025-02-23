@@ -34,6 +34,10 @@ spring:
         server-addr: ${nacos.server-addr}
 #        username: nacos
 #        password: nacos
+  security:
+    oauth2:
+      authorizationserver:
+        issuer-uri: http://auth-service:8080
 
 feign:
   client:

@@ -48,4 +48,7 @@ public class AuthException extends RuntimeException {
     public static AuthException invalidToken() {
         return new AuthException(401006, "无效的token");
     }
-} 
+    public static AuthException unsupportAuthenticationMethod(String authMethod) {
+        return new AuthException(401007, "不支持的认证方式:"+authMethod);
+    }
+}

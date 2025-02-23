@@ -26,34 +26,7 @@ spring:
         min-idle: 0
         max-wait: -1ms
 
-  security:
-    oauth2:
-      client:
-        registration:
-          github:
-            client-id: ${GITHUB_CLIENT_ID:}
-            client-secret: ${GITHUB_CLIENT_SECRET:}
-          custom:
-            client-id: ${CUSTOM_CLIENT_ID:farm-client}
-            client-secret: ${CUSTOM_CLIENT_SECRET:farm-secret}
-            authorization-grant-type: authorization_code
-            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
-            scope: openid,profile,email
-        provider:
-          custom:
-            authorization-uri: ${CUSTOM_AUTH_URI:http://localhost:8081/oauth2/authorize}
-            token-uri: ${CUSTOM_TOKEN_URI:http://localhost:8081/oauth2/token}
-            user-info-uri: ${CUSTOM_USER_INFO_URI:http://localhost:8081/userinfo}
-            jwk-set-uri: ${CUSTOM_JWK_SET_URI:http://localhost:8081/.well-known/jwks.json}
-      ldap:
-        urls: ${LDAP_URL:ldap://localhost:389}
-        base:
-          dn: ${LDAP_BASE_DN:dc=example,dc=com}
-        username: ${LDAP_USERNAME:cn=admin,dc=example,dc=com}
-        password: ${LDAP_PASSWORD:admin}
-        user:
-          dn-pattern: ${LDAP_USER_DN_PATTERN:uid={0},ou=people}
-          search-filter: ${LDAP_USER_SEARCH_FILTER:(uid={0})}
+
   application:
     name: auth-server
 
@@ -88,7 +61,7 @@ logging:
     org.springframework: INFO
     org.hibernate: INFO
     org.springframework.web: INFO
-    org.springframework.security: INFO
+    org.springframework.security: DEBUG
 
 jackson:
   date-format: yyyy-MM-dd HH:mm:ss

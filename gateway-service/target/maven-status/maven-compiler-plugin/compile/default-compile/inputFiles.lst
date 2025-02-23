@@ -1,4 +1,5 @@
 /Users/li/Documents/idea_workspace/farm/gateway-service/src/main/java/com/doooogh/farm/gateway/config/SecurityConfig.java
 /Users/li/Documents/idea_workspace/farm/gateway-service/src/main/java/com/doooogh/farm/gateway/GatewayServiceApplication.java
+/Users/li/Documents/idea_workspace/farm/gateway-service/src/main/java/com/doooogh/farm/gateway/config/IpKeyResolverConfig.java
 /Users/li/Documents/idea_workspace/farm/gateway-service/src/main/java/com/doooogh/farm/gateway/controller/FallbackController.java
 /Users/li/Documents/idea_workspace/farm/gateway-service/src/main/java/com/doooogh/farm/gateway/filter/GlobalAuthFilter.java

@@ -1,23 +1,39 @@
 package com.doooogh.farm.auth.config;
 
+import com.doooogh.farm.auth.config.token.CustomTokenService;
+import com.doooogh.farm.auth.filter.CustomAuthenticationFilter;
+import com.doooogh.farm.auth.service.CustomUserDetailsService;
+import com.doooogh.farm.common.util.JwtUtil;
+import lombok.RequiredArgsConstructor;
 import org.bouncycastle.openssl.PEMParser;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
-import org.springframework.security.oauth2.provider.token.TokenStore;
+import org.springframework.security.oauth2.provider.ClientDetailsService;
+import org.springframework.security.oauth2.provider.code.AuthorizationCodeServices;
+import org.springframework.security.oauth2.provider.code.InMemoryAuthorizationCodeServices;
+import org.springframework.security.oauth2.provider.token.*;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 import com.doooogh.farm.auth.service.CustomClientDetailsService;
+import org.springframework.security.oauth2.provider.token.store.redis.RedisTokenStore;
 
 import java.io.FileReader;
 import java.nio.file.Files;
 import java.security.interfaces.RSAPrivateKey;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * OAuth2 授权服务器配置类。
@@ -25,20 +41,21 @@ import java.security.interfaces.RSAPrivateKey;
  */
 @Configuration
 @EnableAuthorizationServer
+@RequiredArgsConstructor
 public class OAuth2AuthorizationConfig extends AuthorizationServerConfigurerAdapter {
 
-    private final CustomClientDetailsService customClientDetailsService;
+    private final CustomUserDetailsService customUserDetailsService;
+
+    private final JwtAccessTokenConverter accessTokenConverter;
 
 
-    /**
-     * 构造函数，注入自定义的 ClientDetailsService。
-     * authenticationManager
-     *
-     * @param customClientDetailsService 自定义的 ClientDetailsService 实现
-     */
-    public OAuth2AuthorizationConfig(CustomClientDetailsService customClientDetailsService) {
-        this.customClientDetailsService = customClientDetailsService;
-    }
+    private final AuthenticationManager authenticationManager;
+
+
+    private final TokenStore tokenStore;
+
+    private final JwtUtil jwtUtil;
+
 
     /**
      * 配置授权服务器的安全性。
@@ -48,7 +65,9 @@ public class OAuth2AuthorizationConfig extends AuthorizationServerConfigurerAdap
      */
     @Override
     public void configure(AuthorizationServerSecurityConfigurer security) throws Exception {
-        security.tokenKeyAccess("permitAll()").checkTokenAccess("isAuthenticated()");
+        security
+                      .tokenKeyAccess("permitAll()")                    //oauth/token_key是公开
+                .checkTokenAccess("permitAll()")  ;
     }
 
     /**
@@ -59,51 +78,38 @@ public class OAuth2AuthorizationConfig extends AuthorizationServerConfigurerAdap
      */
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
-        clients.withClientDetails(customClientDetailsService);
+        clients.inMemory()// 使用in‐memory存储
+                .withClient("c1")// client_id
+                .secret(new BCryptPasswordEncoder().encode("secret"))
+                .resourceIds("res1")
+                .authorizedGrantTypes("authorization_code", "password", "client_credentials", "implicit", "refresh_token")// 该client允许的授权类型 authorization_code,password,refresh_token,implicit,client_credentials
+                .scopes("all")// 允许的授权范围
+                .autoApprove(false) //加上验证回调地址
+                .authorities("admin")
+                .redirectUris("http://www.baidu.com");
     }
 
     /**
-     * 配置授权服务器的端点。
-     *
-     * @param endpoints 授权服务器端点配置
-     * @throws Exception 配置过程中可能抛出的异常
+     * @description: 设置授权码模式的授权码如何存取，暂时采用内存方式
+     * @author Li
+     * @date 2025/2/23
      */
+    @Bean
+    public AuthorizationCodeServices authorizationCodeServices() {
+        InMemoryAuthorizationCodeServices inMemoryAuthorizationCodeServices = new InMemoryAuthorizationCodeServices();
+        return inMemoryAuthorizationCodeServices;
+    }
+
+
     @Override
-    public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
-        endpoints.tokenStore(tokenStore()).accessTokenConverter(accessTokenConverter());
-    }
-
-    /**
-     * 配置令牌存储。
-     *
-     * @return 令牌存储实现
-     */
-    @Bean
-    public TokenStore tokenStore() throws Exception {
-        return new JwtTokenStore(accessTokenConverter());
-    }
-
-
-    /**
-     * 配置 JWT 访问令牌转换器。
-     *
-     * @return JWT 访问令牌转换器
-     */
-    @Bean
-    public JwtAccessTokenConverter accessTokenConverter() throws Exception {
-        JwtAccessTokenConverter converter = new JwtAccessTokenConverter();
-
-        // 读取并设置私钥 (PEM 格式的私钥)
-        ClassPathResource resource = new ClassPathResource("private.pem");
-        String privateKey = new String(Files.readAllBytes(resource.getFile().toPath()));
-
-        // 去除头尾的非私钥部分
-        privateKey = privateKey.replace("-----BEGIN PRIVATE KEY-----", "").replace("-----END PRIVATE KEY-----", "").replaceAll("\n", "");
-
-        // 设置签名密钥
-        converter.setSigningKey(privateKey);  // 这里不需要设置验证密钥
-
-        return converter;
+    public void configure(AuthorizationServerEndpointsConfigurer endpoints) {
+        endpoints
+                .authenticationManager(authenticationManager)//认证管理器
+                .userDetailsService(customUserDetailsService)
+                .tokenServices(new CustomTokenService(jwtUtil, tokenStore))//令牌管理服务
+                .accessTokenConverter(accessTokenConverter)
+                .authorizationCodeServices(authorizationCodeServices())//授权码服务
+                .allowedTokenEndpointRequestMethods(HttpMethod.POST);
     }
 
 

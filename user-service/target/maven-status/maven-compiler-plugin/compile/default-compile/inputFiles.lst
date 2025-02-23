@@ -13,7 +13,6 @@
 /Users/li/Documents/idea_workspace/farm/user-service/src/main/java/com/doooogh/farm/user/model/PermissionTree.java
 /Users/li/Documents/idea_workspace/farm/user-service/src/main/java/com/doooogh/farm/user/model/UserInfo.java
 /Users/li/Documents/idea_workspace/farm/user-service/src/main/java/com/doooogh/farm/user/model/WechatUserInfo.java
-/Users/li/Documents/idea_workspace/farm/user-service/src/main/java/com/doooogh/farm/user/config/SecurityConfig.java
 /Users/li/Documents/idea_workspace/farm/user-service/src/main/java/com/doooogh/farm/user/mapper/UserRoleMapper.java
 /Users/li/Documents/idea_workspace/farm/user-service/src/main/java/com/doooogh/farm/user/mapper/RolePermissionMapper.java
 /Users/li/Documents/idea_workspace/farm/user-service/src/main/java/com/doooogh/farm/user/service/RoleService.java

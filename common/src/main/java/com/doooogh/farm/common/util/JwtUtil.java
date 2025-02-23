@@ -5,6 +5,7 @@ import com.doooogh.farm.common.config.JwtConfig;
 import com.doooogh.farm.common.exception.AuthException;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -23,6 +24,7 @@ import java.util.function.Function;
  */
 @Component
 @RequiredArgsConstructor
+@Getter
 public class JwtUtil {
 
     private final JwtConfig jwtConfig;
@@ -32,6 +34,16 @@ public class JwtUtil {
 
     @Value("${jwt.expiration}")
     private Long expiration;
+
+    /**
+     * 毫秒 单位
+     */
+    private final static long MS_UNIT=  60 * 60 * 1000;
+
+
+
+
+
 
     /**
      * 生成JWT令牌
@@ -49,8 +61,8 @@ public class JwtUtil {
         claims.put("authenticationType",userDetails.getUser().getAuthenticationType());
         
         long expiration = isRefreshToken ? 
-            jwtConfig.getRefreshTokenExpiration() * 24 * 60 * 60 * 1000 : // 转换为毫秒
-            jwtConfig.getTokenExpiration() * 60 * 60 * 1000; // 转换为毫秒
+            jwtConfig.getRefreshTokenExpiration() * 24 * MS_UNIT : // 转换为毫秒
+            jwtConfig.getTokenExpiration() * MS_UNIT; // 转换为毫秒
             
         return Jwts.builder()
             .setClaims(claims)
